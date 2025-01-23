@@ -121,7 +121,7 @@
 	
 	
 	// Place order.
-    $order = $kite->placeOrder("regular",);
+    // $order = $kite->placeOrder("regular",);
 	
 	// Place multiple orders
 	foreach ($orders as $order_data) {
