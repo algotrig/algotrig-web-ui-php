@@ -1,5 +1,10 @@
 <?php	
 	
+	// Initialise.
+    // $kite = new KiteConnect("004twwh7tdmvkwgk");
+    //$kite = new KiteConnect("004twwh7tdmvkwgk","KdAOdP7LtCrjYZ3PtRLmVOjfnsQxqw8R");
+	
+	
 	print_r($kite->getInstruments("NSE"));
 	print_r($kite->getInstruments("NFO"));
 	

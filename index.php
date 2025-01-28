@@ -1,6 +1,22 @@
+<?php 
+	require_once __DIR__ . '/functions.php';
+	
+	$target_value = 0.0;
+	$execute_orders = false;
+	
+	if(isset($_GET["target_value"])) {
+		$target_value = floatval($_GET["target_value"]);
+	}
+	
+	if(isset($_GET["execute_orders"])) {
+		$execute_orders = intval($_GET["execute_orders"]);
+	}
+	
+?>
 <html><head></head><body>
 <button><a href="http://localhost/kite/?execute_orders=0">Refresh</a></button>
-<button><a href="http://localhost/kite/?execute_orders=1">Execute</a></button>
+<button><a href="http://localhost/kite/?execute_orders=0&target_value=<?php echo $target_value ?>">Refresh [TV]</a></button>
+<button><a href="http://localhost/kite/?execute_orders=1&target_value=<?php echo $target_value ?>">Execute</a></button>
 <?php
 	
 	require_once __DIR__ . '/vendor/autoload.php';
@@ -26,89 +42,12 @@
 		exit(0);
 	}
 	
-	define("ACCESS_TOKEN","hGIAYF53Tvm056CQ3P08IBrGfyeaEU5F");
+	define("ACCESS_TOKEN","EYNvmT7R3ZJZk822VR2Oc0fGTm82SIKC");
 	$kite->setAccessToken(ACCESS_TOKEN);
-
-	function get_trading_symbols(array $holdings) : array {
-		$holding_keys = [];
-		$trading_symbols = [];
-		$quote_symbols = [];
-		for ($i=0; $i< count($holdings); $i++){
-				$holding = $holdings[$i];
-				$ts = $holding->tradingsymbol;
-				$qs = "NSE:".$ts;
-				array_push($trading_symbols, $holding->tradingsymbol);
-				array_push($quote_symbols, $qs);
-				$holding_keys[$ts] = $i;
-		}
-		//print_r($trading_symbols);
-		return ["trading_symbols" => $trading_symbols, "quote_symbols" => $quote_symbols, "holding_keys" => $holding_keys];
-	}
-
-	function objectToTableRow($object, bool $header = false) {
-		// Start table row
-		$html = "<tr>";
-		
-		// Loop through the object properties
-		foreach ($object as $key => $value) {
-			if($key == "current_value" && !$header){
-				$html .= "<td><a href=\"?execute_orders=0&target_value=$value\">$value</a></td>";
-			} else {
-				$html .= !$header ? "<td>{$value}</td>" : "<td>{$key}</td>";
-			}
-		}
-
-		// End table row
-		$html .= "</tr>";
-		
-		return $html;
-	}
-
-	function get_order($obj,$kite) {
-		if($obj->trading_symbol == "FMCGIETF" || $obj->trading_symbol == "HDFCSENSEX") {
-			$quote_symbols = [$obj->quote_symbol];
-			$quotes = $kite->getQuote($quote_symbols);
-			$price = $quotes[$obj->quote_symbol]->depth->sell[4]->price;
-			echo "Depth Price: $price <br/>";
-			return [
-				"tradingsymbol" => $obj->trading_symbol,
-				"exchange" => "NSE",
-				"quantity" => $obj->buy_qty,
-				"transaction_type" => "BUY",
-				"order_type" => "LIMIT",
-				"price" => $price,
-				"product" => "CNC"
-			];
-		} else {
-			return [
-				"tradingsymbol" => $obj->trading_symbol,
-				"exchange" => "NSE",
-				"quantity" => $obj->buy_qty,
-				"transaction_type" => "BUY",
-				"order_type" => "MARKET",
-				"product" => "CNC"
-			];
-		}
-	}
 
 	//print_r($_GET);
 	
-	$target_value = 0.0;
-	$execute_orders = false;
 	
-	if(isset($_GET["target_value"])) {
-		$target_value = floatval($_GET["target_value"]);
-		echo "Target Value : " . $target_value;
-	}
-	echo "<br/>";
-	
-	if(isset($_GET["execute_orders"])) {
-		$execute_orders = intval($_GET["execute_orders"]);
-	}
-	
-	echo "Execute : $execute_orders ;";
-	
-	echo "<br/>";
 	
 	// Get the list of positions.
 	$positions = $kite->getPositions();
@@ -126,23 +65,10 @@
 		array_push($day_positions,$pos_day);
 		$day_positions_keys[$ts]=$i;
 	}
-    echo "Positions: <br/>";
-	echo "<pre>";
-    //print_r($positions->day);
-	echo "</pre>";
-	//exit(0);
-	
-    // Initialise.
-    // $kite = new KiteConnect("004twwh7tdmvkwgk");
-    //$kite = new KiteConnect("004twwh7tdmvkwgk","KdAOdP7LtCrjYZ3PtRLmVOjfnsQxqw8R");
-
-	
+    	
 	// Get the list of holdings.
-	//echo "Holdings: ";
 	$holdings = $kite->getHoldings();
-	//$holdings_json = json_encode($holdings);
-	//print_r($holdings);
-	
+		
 	$gts = get_trading_symbols($holdings);
 	echo "<pre>";
 	//print_r($gts);
@@ -169,7 +95,7 @@
 	
 	if($target_value == 0.0) {
 		foreach($trading_symbols as $ts) {
-			if($ts == "SETFNIF50" || $ts == "NIFTYBEES" || $ts == "MAFANG"){
+			if($ts == "SETFNIF50" || $ts == "NIFTYBEES" || $ts == "MAFANG" || $ts == "MONQ50" || $ts == "HNGSNGBEES" ||  $ts == "MON100"){
 				continue;
 			}
 			
@@ -185,12 +111,10 @@
 	} else {
 		$max_curr_val = $target_value;
 	}
-	
-	echo "Max Current Value = $max_curr_val <br/>";
 		
 	$total_buy_amt = 0.00;
 	foreach($trading_symbols as $ts) {
-		if($ts == "SETFNIF50" || $ts == "NIFTYBEES" || $ts == "MAFANG"){
+		if($ts == "SETFNIF50" || $ts == "NIFTYBEES" || $ts == "MAFANG" || $ts == "MONQ50" || $ts == "HNGSNGBEES" ||  $ts == "MON100"){
 			continue;
 		}
 		//print_r($ltps->$ts);
@@ -215,8 +139,10 @@
 			$buy_qty = floor($diff / $ltp);
 		}
 		$obj->buy_qty = $buy_qty;
-		$obj->buy_amt = floatval($buy_qty * $ltp);
-		$total_buy_amt += $obj->buy_amt;
+		$buy_amt = floatval($buy_qty * $ltp);
+		$obj->buy_amt = $buy_amt;
+		$total_buy_amt += $buy_amt;
+		$obj->proposed_value = $curr_val + $buy_amt;
 		$result[$ts] = $obj; 
 		if($curr_val == $max_curr_val){
 			$obj->trading_symbol = "*".$ts;
@@ -251,7 +177,7 @@
 	echo "</table>";
 	
 	echo "<pre>";
-	print_r($orders);
+	//print_r($orders);
 	echo "</pre>";
 	//exit(0);
 	
