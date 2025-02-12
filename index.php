@@ -35,9 +35,9 @@ header("Refresh: $n");
 <body>
 <p>Current time: <?php echo date('d-m-Y H:i:s A'); ?></p>
 <p>Refresh: <?php echo $n; ?> seconds</p>
-<button><a href="http://localhost/kite/?execute_orders=0&r=<?php echo $n ?>">Refresh</a></button>
-<button><a href="http://localhost/kite/?execute_orders=0&target_value=<?php echo $target_value ?>&r=<?php echo $n ?>">Refresh [TV]</a></button>
-<button><a href="http://localhost/kite/?execute_orders=1&target_value=<?php echo $target_value ?>&r=<?php echo $n ?>">Execute</a></button>
+<button><a href="/?execute_orders=0&r=<?php echo $n ?>">Refresh</a></button>
+<button><a href="/?execute_orders=0&target_value=<?php echo $target_value ?>&r=<?php echo $n ?>">Refresh [TV]</a></button>
+<button><a href="/?execute_orders=1&target_value=<?php echo $target_value ?>&r=<?php echo $n ?>">Execute</a></button>
 <?php
 	
 	define("API_KEY","004twwh7tdmvkwgk");
