@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Stock Quotes</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #quotes { margin-top: 20px; }
+        .quote { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Live Stock Quotes</h1>
+    <div id="quotes"></div>
+	<table border=1>
+		<tr>
+			<td>NIFTYBEES</td>
+			<td id="151066372">260</td>
+			<td id="ts_151066372"></td>
+		</tr>
+		<tr>
+			<td>SETFNIF50</td>
+			<td id="151075332">245</td>
+			<td id="ts_151075332"></td>
+		</tr>
+		<tr>
+			<td>HDFCSENSEX</td>
+			<td id="2967809">86.9</td>
+			<td id="ts_2967809"></td>
+		</tr>
+		<tr>
+			<td>GOLDBEES</td>
+			<td id="3693569">87.74</td>
+			<td id="ts_3693569"></td>
+		</tr>
+		<tr>
+			<td>SILVERBEES</td>
+			<td id="2068481">68</td>
+			<td id="ts_2068481"></td>
+		</tr>
+	</table>
+    <script>
+        // Replace 'your_api_key' and 'your_access_token' with your actual API key and access token
+        const apiKey = '004twwh7tdmvkwgk';
+        const accessToken = 'Fbm3vjt1LksEz1UPOewodykWcGcbIcC8';
+        const socketUrl = `wss://ws.kite.trade?api_key=${apiKey}&access_token=${accessToken}`;
+
+        const ws = new WebSocket(socketUrl);
+
+		// Define parseBinary function before using it
+    function parseBinary(dataView) {
+		const ticks = [];
+		console.log(dataView);
+		console.log(dataView.byteLength);
+		if(dataView.byteLength < 48){
+			return ticks;
+		}
+        const numberOfPackets = dataView.getInt16(0);
+		console.log(numberOfPackets);
+        let index = 4;
+        for (let i = 0; i < numberOfPackets; i++) {
+            const size = dataView.getInt16(index - 2);
+			console.log("Size: " + size);
+            const instrumentToken = dataView.getInt32(index);
+			console.log("instrumentToken: " + instrumentToken);
+            const lastTradedPrice = dataView.getInt32(index + 4) / 100; // Convert paise to rupees
+			console.log("lastTradedPrice: " + lastTradedPrice);
+            const lastTradedQuantity = dataView.getInt32(index + 8);
+			console.log("lastTradedQuantity: " + lastTradedQuantity);
+			const lastTradedTimestamp = dataView.getInt32(index + 44);
+			console.log("lastTradedTimestamp: " + lastTradedTimestamp);
+			
+			// Example timestamp (in seconds)
+			const timestampInSeconds = lastTradedTimestamp; // Replace with your actual timestamp
+
+			// Convert to milliseconds and create a Date object
+			const date = new Date(timestampInSeconds * 1000);
+
+			// Format the date to a readable string
+			const readableDate = date.toLocaleString('en-IN', {
+				year: 'numeric',
+				month: 'long',
+				day: 'numeric',
+				hour: 'numeric',
+				minute: 'numeric',
+				second: 'numeric',
+				timeZoneName: 'short'
+			});
+
+			console.log(readableDate); // Example output: "January 29, 2025, 1:00:00 PM IST"
+            ticks.push({
+                instrumentToken,
+                lastTradedPrice,
+                lastTradedQuantity,
+				lastTradedTimestamp,
+				readableDate
+            });
+
+            index += 2 + size; // Move to the next packet
+        }
+		console.log(ticks);
+        return ticks;
+    }
+
+
+        ws.onopen = function() {
+            console.log('Connected to the WebSocket');
+            // Subscribe to a stock (e.g., NIFTYBEES)
+            const subscribeMessage = {
+                "a": "subscribe",
+                "v": [3693569,2068481,2967809,151066372,151075332] // Add your desired stock symbols here
+            };
+            ws.send(JSON.stringify(subscribeMessage));
+			modeMessage = { a: "mode", v: ["full", [3693569,2068481,2967809,151066372,151075332]] };
+			ws.send(JSON.stringify(modeMessage));
+        };
+
+        ws.onmessage = function(event) {
+			console.log(event);
+			if (event.data instanceof Blob) {
+                const reader = new FileReader();
+				reader.onload = function() {
+					const arrayBuffer = reader.result; // This is now an ArrayBuffer
+					const dataView = new DataView(arrayBuffer);
+					const ticks = parseBinary(dataView);
+					ticks.forEach(tick => displayQuote(tick));
+				};
+				reader.readAsArrayBuffer(event.data); // Read the Blob as an ArrayBuffer
+            } else {
+				const data = JSON.parse(event.data);
+				console.log(data);
+				if (data.tick) {
+					displayQuote(data.tick);
+				}
+			}
+        };
+
+        ws.onclose = function() {
+            console.log('WebSocket connection closed');
+        };
+
+        function displayQuote(tick) {
+			quoteTd = document.getElementById(tick.instrumentToken);
+			quoteTd.innerHTML = tick.lastTradedPrice;
+			
+			quoteTs = document.getElementById("ts_"+tick.instrumentToken);
+			quoteTs.innerHTML = tick.readableDate;
+			
+            /*const quotesDiv = document.getElementById('quotes');
+            const quoteDiv = document.createElement('div');
+            quoteDiv.className = 'quote';
+            quoteDiv.innerHTML = `
+                <strong>${tick.instrumentToken}</strong>: 
+                Price: ₹${tick.lastTradedPrice} 
+                Volume: ${tick.lastTradedQuantity}
+                Time: ${new Date(tick.timestamp).toLocaleTimeString()}
+            `;
+            quotesDiv.appendChild(quoteDiv);*/
+        }
+    </script>
+</body>
+</html>

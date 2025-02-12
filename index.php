@@ -1,3 +1,12 @@
+<?php
+$n=15;
+if(isset($_GET['r'])){
+	$n=$_GET['r'];
+}
+// Set the refresh header to refresh the page every $n seconds
+header("Refresh: $n");
+?>
+<!DOCTYPE html>
 <?php 
 	require_once __DIR__ . '/functions.php';
 	
@@ -13,28 +22,41 @@
 	}
 	
 ?>
-<html><head></head><body>
-<button><a href="http://localhost/kite/?execute_orders=0">Refresh</a></button>
-<button><a href="http://localhost/kite/?execute_orders=0&target_value=<?php echo $target_value ?>">Refresh [TV]</a></button>
-<button><a href="http://localhost/kite/?execute_orders=1&target_value=<?php echo $target_value ?>">Execute</a></button>
+<html>
+<head>
+	<title>ALGO TRIG</title>
+    <!-- <meta http-equiv="refresh" content="10"> Refresh every 300 seconds (5 minutes) -->
+	<style type="text/css">
+		pre {
+			font-size: 17px;
+		}
+	</style>
+</head>
+<body>
+<p>Current time: <?php echo date('d-m-Y H:i:s A'); ?></p>
+<p>Refresh: <?php echo $n; ?> seconds</p>
+<button><a href="http://localhost/kite/?execute_orders=0&r=<?php echo $n ?>">Refresh</a></button>
+<button><a href="http://localhost/kite/?execute_orders=0&target_value=<?php echo $target_value ?>&r=<?php echo $n ?>">Refresh [TV]</a></button>
+<button><a href="http://localhost/kite/?execute_orders=1&target_value=<?php echo $target_value ?>&r=<?php echo $n ?>">Execute</a></button>
 <?php
+	
+	define("API_KEY","004twwh7tdmvkwgk");
+	define("SECRET","89aivmhz2z9q9eqo0fy0dy1yy3e8xuw3");
+	define("ACCESS_TOKEN","yi2dcSVdgZNip7tX3Zmv4RPs78igSS63");
 	
 	require_once __DIR__ . '/vendor/autoload.php';
 
     use KiteConnect\KiteConnect;
 	
-	$kite = new KiteConnect("004twwh7tdmvkwgk");
+	$kite = new KiteConnect(API_KEY);
 	
-	if(isset($_GET['request_token']))
-	{
+	if(isset($_GET['request_token'])) {
 		$req_token = $_GET['request_token'];
-		echo "Token Set: $req_token <br/>";
 		try {
-			$user = $kite->generateSession($req_token, "89aivmhz2z9q9eqo0fy0dy1yy3e8xuw3");
+			$user = $kite->generateSession($req_token, SECRET);
 			echo "Authentication successful. <br /><pre>";
 			print_r($user);
 			echo "</pre>";
-			$kite->setAccessToken($user->access_token);
 		} catch(Exception $e) {
 			echo "Authentication failed: ".$e->getMessage();
 			throw $e;
@@ -42,13 +64,8 @@
 		exit(0);
 	}
 	
-	define("ACCESS_TOKEN","EYNvmT7R3ZJZk822VR2Oc0fGTm82SIKC");
 	$kite->setAccessToken(ACCESS_TOKEN);
 
-	//print_r($_GET);
-	
-	
-	
 	// Get the list of positions.
 	$positions = $kite->getPositions();
 	$positions_day = $positions->day;
