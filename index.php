@@ -71,6 +71,9 @@ header("Refresh: $n");
 		pre {
 			font-size: 17px;
 		}
+		button {
+			font-size: 18px;
+		}
 	</style>
 </head>
 <body>
@@ -110,9 +113,15 @@ header("Refresh: $n");
 	$trading_symbols = $gts["trading_symbols"];
 	$quote_symbols = $gts["quote_symbols"];
 	$holding_keys = $gts["holding_keys"];
+	
+	$nifty50qs = "NSE:NIFTY 50";
+	$quote_symbols[] = $nifty50qs;
 	$ltps = $kite->getLTP($quote_symbols);
 	//print_r($ltps);
-	echo "</pre>";
+	
+	$nifty50ltp = $ltps->$nifty50qs->last_price;
+	echo "Nifty 50: <a href=\"/?execute_orders=0&target_value=$nifty50ltp&r=$n\">$nifty50ltp</a>";
+	
 	$result = [];
 	$max_curr_val = 0.0;
 	
@@ -126,10 +135,16 @@ header("Refresh: $n");
 		}
 		$holdings[$holding_keys[$ts]]->holding_quantity = $holding_qty;
 	}
+		
+	//print_r($quote_symbols);
+	
+	//$quotes = $kite->getQuote($quote_symbols);
+	
+	//print_r($quotes);
 	
 	if($target_value == 0.0) {
 		foreach($trading_symbols as $ts) {
-			if($ts == "SETFNIF50" || $ts == "NIFTYBEES" || $ts == "MAFANG" || $ts == "MONQ50" || $ts == "HNGSNGBEES" ||  $ts == "MON100"){
+			if($ts == "SETFNIF50" || $ts == "NIFTYBEES" ){ //|| $ts == "MAFANG" || $ts == "MONQ50" || $ts == "HNGSNGBEES" ||  $ts == "MON100"
 				continue;
 			}
 			
@@ -148,7 +163,7 @@ header("Refresh: $n");
 		
 	$total_buy_amt = 0.00;
 	foreach($trading_symbols as $ts) {
-		if($ts == "SETFNIF50" || $ts == "NIFTYBEES" || $ts == "MAFANG" || $ts == "MONQ50" || $ts == "HNGSNGBEES" ||  $ts == "MON100"){
+		if($ts == "SETFNIF50" || $ts == "NIFTYBEES" ){ // || $ts == "MAFANG" || $ts == "MONQ50" || $ts == "HNGSNGBEES" ||  $ts == "MON100"
 			continue;
 		}
 		//print_r($ltps->$ts);

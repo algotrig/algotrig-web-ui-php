@@ -8,7 +8,7 @@
 		$kite = new KiteConnect("004twwh7tdmvkwgk");
 	
 		if($wat) {
-			define("ACCESS_TOKEN","hWDUtiE82rrgAYo0th4I7YNnxlzq4zrZ");
+			define("ACCESS_TOKEN","Uf7cvLC7YXMGfIKZEE6FmGtlnRR7rZJu");
 			$kite->setAccessToken(ACCESS_TOKEN);
 		}
 	

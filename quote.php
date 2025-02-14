@@ -7,6 +7,7 @@
 	echo "<pre>";
 	
 	$quote_symbols = [];
+	$quote_symbols[] = "NSE:NIFTY 50";
 	$quote_symbols[] = "NSE:FMCGIETF";
 	$quote_symbols[] = "NSE:HDFCSENSEX";
 	
@@ -14,8 +15,8 @@
 	
 	$quotes = $kite->getQuote($quote_symbols);
 	
-	//print_r($quotes);
-	print_r($quotes["NSE:FMCGIETF"]->depth->sell);
+	print_r($quotes);
+	//print_r($quotes["NSE:FMCGIETF"]->depth->sell);
 	
 	echo "</pre>";
 	
