@@ -71,9 +71,15 @@ header("Refresh: $n");
 		pre {
 			font-size: 17px;
 		}
+		
 		button {
 			font-size: 18px;
 		}
+		
+		.opening_quantity, .holding_quantity, .ltp, .difference, .buy_qty, .buy_amt {
+			text-align: right;
+		}
+		
 	</style>
 </head>
 <body>
@@ -173,25 +179,25 @@ header("Refresh: $n");
 		$obj->trading_symbol = $ts;
 		$obj->quote_symbol = $qs;
 		$obj->instrument_token = $ltp_obj->instrument_token;
-		$obj->ltp = $ltp_obj->last_price;
 		$opening_qty = $holdings[$holding_keys[$ts]]->opening_quantity;
 		$holding_qty = $holdings[$holding_keys[$ts]]->holding_quantity;
 		$obj->opening_quantity = $opening_qty;
 		$obj->holding_quantity = $holding_qty;
-		$ltp = floatval($obj->ltp);
+		$ltp = floatval($ltp_obj->last_price);
+		$obj->ltp = number_format($ltp,2,'.','');
 		$curr_val = intval($holding_qty) * $ltp;
-		$obj->current_value = $curr_val;
+		$obj->current_value = number_format($curr_val,2,'.','');
 		$diff = floatval($target_value) - floatval($obj->current_value);
-		$obj->difference = number_format($diff,2);
+		$obj->difference = number_format($diff,2,'.','');
 		$buy_qty = 0; 
 		if($diff > 0.0){
 			$buy_qty = floor($diff / $ltp);
 		}
 		$obj->buy_qty = $buy_qty;
 		$buy_amt = floatval($buy_qty * $ltp);
-		$obj->buy_amt = $buy_amt;
+		$obj->buy_amt = number_format($buy_amt,2,'.','');
 		$total_buy_amt += $buy_amt;
-		$obj->proposed_value = $curr_val + $buy_amt;
+		$obj->proposed_value = number_format($curr_val + $buy_amt,2,'.','');
 		$result[$ts] = $obj; 
 		if($curr_val == $max_curr_val){
 			$obj->trading_symbol = "*".$ts;
@@ -205,7 +211,7 @@ header("Refresh: $n");
 	echo "Max Current Value = $max_curr_val <br/>";
 	echo "Total Buy Amount = $total_buy_amt <br/>";
    
-	echo "<table border = 1 cellspacing = 0>";
+	echo "<table border = 1 cellspacing = 0 cellpadding = 5>";
 	$print_header_row = true;
 	$orders = [];
 	foreach ($result as $sym =>$r)

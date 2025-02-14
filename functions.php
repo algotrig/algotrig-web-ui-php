@@ -25,7 +25,8 @@
 			if(($key == "current_value" || $key == "proposed_value") && !$header){
 				$html .= "<td><a href=\"?execute_orders=0&target_value=$value\">$value</a></td>";
 			} else {
-				$html .= !$header ? "<td>{$value}</td>" : "<td>{$key}</td>";
+				$key_br = $header ? str_replace('_', '<br/>', $key) : $key;
+				$html .= !$header ? "<td class=\"{$key}\">{$value}</td>" : "<td>{$key_br}</td>";
 			}
 		}
 
