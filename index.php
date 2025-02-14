@@ -1,5 +1,46 @@
 <?php
-$n=15;
+session_start();
+
+	if (isset($_SESSION['access_token'])) {
+		// proceed
+	} else {
+		header('Location: /logout.php');
+	}
+
+	define("API_KEY","004twwh7tdmvkwgk");
+	define("SECRET","89aivmhz2z9q9eqo0fy0dy1yy3e8xuw3");
+	//define("ACCESS_TOKEN","yi2dcSVdgZNip7tX3Zmv4RPs78igSS63");
+	
+	require_once __DIR__ . '/vendor/autoload.php';
+
+    use KiteConnect\KiteConnect;
+	
+	$kite = new KiteConnect(API_KEY);
+	
+	if(isset($_GET['request_token'])) {
+		$req_token = $_GET['request_token'];
+		try {
+			$user = $kite->generateSession($req_token, SECRET);
+			echo "Authentication successful. <br /><pre>";
+			// Set session variable
+			$_SESSION['access_token'] = $user->access_token;
+			// Redirect to another page
+			header('Location: /');
+			exit(0); // Ensure that no further code is executed after the redirect
+			//print_r($user);
+			//echo "</pre>";
+		} catch(Exception $e) {
+			echo "Authentication failed: ".$e->getMessage();
+			throw $e;
+		}
+		exit(0);
+	}
+
+	//print_r($_SESSION);
+	//exit(0);
+
+
+$n=300;
 if(isset($_GET['r'])){
 	$n=$_GET['r'];
 }
@@ -33,38 +74,14 @@ header("Refresh: $n");
 	</style>
 </head>
 <body>
-<p>Current time: <?php echo date('d-m-Y H:i:s A'); ?></p>
+<p>Current time: <?php echo date('d-m-Y H:i:s A'); ?> <button><a href="/logout.php">Logout</a></button></p>
 <p>Refresh: <?php echo $n; ?> seconds</p>
 <button><a href="/?execute_orders=0&r=<?php echo $n ?>">Refresh</a></button>
 <button><a href="/?execute_orders=0&target_value=<?php echo $target_value ?>&r=<?php echo $n ?>">Refresh [TV]</a></button>
 <button><a href="/?execute_orders=1&target_value=<?php echo $target_value ?>&r=<?php echo $n ?>">Execute</a></button>
 <?php
 	
-	define("API_KEY","004twwh7tdmvkwgk");
-	define("SECRET","89aivmhz2z9q9eqo0fy0dy1yy3e8xuw3");
-	define("ACCESS_TOKEN","yi2dcSVdgZNip7tX3Zmv4RPs78igSS63");
-	
-	require_once __DIR__ . '/vendor/autoload.php';
-
-    use KiteConnect\KiteConnect;
-	
-	$kite = new KiteConnect(API_KEY);
-	
-	if(isset($_GET['request_token'])) {
-		$req_token = $_GET['request_token'];
-		try {
-			$user = $kite->generateSession($req_token, SECRET);
-			echo "Authentication successful. <br /><pre>";
-			print_r($user);
-			echo "</pre>";
-		} catch(Exception $e) {
-			echo "Authentication failed: ".$e->getMessage();
-			throw $e;
-		}
-		exit(0);
-	}
-	
-	$kite->setAccessToken(ACCESS_TOKEN);
+	$kite->setAccessToken($_SESSION['access_token']);
 
 	// Get the list of positions.
 	$positions = $kite->getPositions();
@@ -215,3 +232,4 @@ header("Refresh: $n");
 	}
 ?>
 </body>
+</html>
