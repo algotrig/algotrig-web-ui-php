@@ -14,41 +14,19 @@
 	require_once __DIR__ . '/vendor/autoload.php';
 
     use KiteConnect\KiteConnect;
-	
-	$kite = new KiteConnect(API_KEY);
-	
-	if(isset($_GET['request_token'])) {
-		$req_token = $_GET['request_token'];
-		try {
-			$user = $kite->generateSession($req_token, SECRET);
-			echo "Authentication successful. <br /><pre>";
-			// Set session variable
-			$_SESSION['access_token'] = $user->access_token;
-			// Redirect to another page
-			header('Location: /');
-			exit(0); // Ensure that no further code is executed after the redirect
-			//print_r($user);
-			//echo "</pre>";
-		} catch(Exception $e) {
-			echo "Authentication failed: ".$e->getMessage();
-			throw $e;
-		}
-		exit(0);
-	}
 
 	$n=isset($_GET['r']) ? $_GET['r'] : 300;
 	
 	// Set the refresh header to refresh the page every $n seconds
 	header("Refresh: $n");
-?>
-<!DOCTYPE html>
-<?php 
+
 	require_once __DIR__ . '/functions.php';
 	
 	$target_value = isset($_GET["target_value"]) ? $target_value = floatval($_GET["target_value"]) : 0.0;
 	$execute_orders = isset($_GET["execute_orders"]) ? intval($_GET["execute_orders"]) : 0;
 	
 ?>
+<!DOCTYPE html>
 <html>
 <head>
 	<title>ALGO TRIG</title>
@@ -76,7 +54,7 @@
 <button><a href="/?execute_orders=1&target_value=<?php echo $target_value ?>&r=<?php echo $n ?>">Execute</a></button>
 <?php
 	
-	$kite->setAccessToken($_SESSION['access_token']);
+	$kite = new KiteConnect(API_KEY, $_SESSION['access_token']);
 
 	// Get the list of positions.
 	$positions = $kite->getPositions();

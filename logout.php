@@ -21,11 +21,5 @@ if (isset($_COOKIE[session_name()])) {
 <body>
 <p>Current time: <?php echo date('d-m-Y H:i:s A'); ?></p>
 <button><a href="/login.php">Login</a></button>
-<pre>
-<?php 
-	// echo session_name();
-	// print_r($_COOKIE);
-?>
-</pre>
 </body>
 </html>

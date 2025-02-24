@@ -1,15 +1,15 @@
 <?php
+	session_start();
 	
-	define("API_KEY","004twwh7tdmvkwgk");
-	define("SECRET","89aivmhz2z9q9eqo0fy0dy1yy3e8xuw3");
-	define("ACCESS_TOKEN","J3lXAVuAFF015R99e5bLRMbiv839qDMg");
+	$ini_data = parse_ini_file('algotrig.ini', true);
+	define("API_KEY",$ini_data['zerodha']['API_KEY']);
+	// define("SECRET",$ini_data['zerodha']['SECRET']);
 	
 	require_once __DIR__ . '/vendor/autoload.php';
 
     use KiteConnect\KiteConnect;
 	
-	$kite = new KiteConnect(API_KEY);
-	$kite->setAccessToken(ACCESS_TOKEN);
+	$kite = new KiteConnect(API_KEY, $_SESSION['access_token']);
 	
 	// Get the list of positions.
 	$positions = $kite->getPositions();

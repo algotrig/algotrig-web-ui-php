@@ -1,19 +1,19 @@
 <?php 
 
-session_set_cookie_params([
-    'lifetime' => 28800, // 8 hours
-    'path' => '/',
-    'domain' => '', 
-    'secure' => true, // Required for 'None' to work
-    'httponly' => true, // Prevents JavaScript from accessing the session
-    'samesite' => 'None' // Allows cross-site cookies
-]);
+	session_set_cookie_params([
+		'lifetime' => 28800, // 8 hours
+		'path' => '/',
+		'domain' => '', 
+		'secure' => true, // Required for 'None' to work
+		'httponly' => true, // Prevents JavaScript from accessing the session
+		'samesite' => 'None' // Allows cross-site cookies
+	]);
 
-session_start();
+	session_start();
 
-	define("API_KEY","004twwh7tdmvkwgk");
-	define("SECRET","89aivmhz2z9q9eqo0fy0dy1yy3e8xuw3");
-	//define("ACCESS_TOKEN","yi2dcSVdgZNip7tX3Zmv4RPs78igSS63");
+	$ini_data = parse_ini_file('algotrig.ini', true);
+	define("API_KEY",$ini_data['zerodha']['API_KEY']);
+	define("SECRET",$ini_data['zerodha']['SECRET']);
 	
 	require_once __DIR__ . '/vendor/autoload.php';
 
