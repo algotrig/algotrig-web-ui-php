@@ -1,16 +1,16 @@
 <?php
-session_start();
-
+	session_start();
+	
 	if (isset($_SESSION['access_token'])) {
 		// proceed
 	} else {
 		header('Location: /logout.php');
 	}
 
-	define("API_KEY","004twwh7tdmvkwgk");
-	define("SECRET","89aivmhz2z9q9eqo0fy0dy1yy3e8xuw3");
-	//define("ACCESS_TOKEN","yi2dcSVdgZNip7tX3Zmv4RPs78igSS63");
-	
+	$ini_data = parse_ini_file('algotrig.ini', true);
+	define("API_KEY",$ini_data['zerodha']['API_KEY']);
+	define("SECRET",$ini_data['zerodha']['SECRET']);
+		
 	require_once __DIR__ . '/vendor/autoload.php';
 
     use KiteConnect\KiteConnect;
@@ -36,31 +36,17 @@ session_start();
 		exit(0);
 	}
 
-	//print_r($_SESSION);
-	//exit(0);
-
-
-$n=300;
-if(isset($_GET['r'])){
-	$n=$_GET['r'];
-}
-// Set the refresh header to refresh the page every $n seconds
-header("Refresh: $n");
+	$n=isset($_GET['r']) ? $_GET['r'] : 300;
+	
+	// Set the refresh header to refresh the page every $n seconds
+	header("Refresh: $n");
 ?>
 <!DOCTYPE html>
 <?php 
 	require_once __DIR__ . '/functions.php';
 	
-	$target_value = 0.0;
-	$execute_orders = false;
-	
-	if(isset($_GET["target_value"])) {
-		$target_value = floatval($_GET["target_value"]);
-	}
-	
-	if(isset($_GET["execute_orders"])) {
-		$execute_orders = intval($_GET["execute_orders"]);
-	}
+	$target_value = isset($_GET["target_value"]) ? $target_value = floatval($_GET["target_value"]) : 0.0;
+	$execute_orders = isset($_GET["execute_orders"]) ? intval($_GET["execute_orders"]) : 0;
 	
 ?>
 <html>
@@ -237,13 +223,12 @@ header("Refresh: $n");
 	//exit(0);
 	
 	if($execute_orders > 0){
-		echo "Executed";
+		echo "Executed Orders: <br/>";
 		// Place multiple orders
 		foreach ($orders as $order_data) {
 			try{
 				$order = $kite->placeOrder("regular",$order_data);
 				print_r($order);
-				echo "Inside try";
 			}catch (Exception $e){
 				echo "<br/>Caught exception: " . print_r($e) ;
 			}
