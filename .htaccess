@@ -1,0 +1,31 @@
+<FilesMatch "\.ini$">
+    Require all denied
+</FilesMatch>
+
+# Set the document root to the public folder
+RewriteEngine On
+RewriteBase /
+
+# Set index.php as the default file
+DirectoryIndex index.php index.html index.htm
+
+# If the requested file/directory doesn't exist in the root
+# RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# And if the request is not already for something in the public folder
+RewriteCond %{REQUEST_URI} !^/public/
+
+# Rewrite to the public folder
+RewriteRule ^(.*)$ public/$1 [L]
+
+# If the request is for a directory in the public folder
+# and doesn't end with a slash, add a trailing slash
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteCond %{REQUEST_URI} !/$
+RewriteRule ^(.*)$ $1/ [L,R=301]
+
+# If the request is for a directory, route to index.php
+# This handles directories that don't have explicit index.php in the URL
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(.*)$ $1/index.php [L]
