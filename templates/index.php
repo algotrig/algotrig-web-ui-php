@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="/assets/css/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.2.1/tablesort.min.js"></script>
 </head>
+
 <body>
     <header>
         <div class="header-content">
@@ -27,7 +29,7 @@
 
     <main>
         <div class="market-info">
-            <h2>Nifty 50: 
+            <h2>Nifty 50:
                 <a href="/?execute_orders=0&target_value=<?php echo $nifty50Ltp; ?>&r=<?php echo $refreshInterval; ?>">
                     <?php echo formatNumber($nifty50Ltp); ?>
                 </a>
@@ -60,14 +62,7 @@
                     ?>
                 </thead>
                 <tbody>
-                    <?php
-                    $maxCurrentValue = $zerodhaKite->getMaxCurrentValue();
-                    foreach ($tradingData as $symbol => $row) {
-                        if ($row->buy_qty >= 0 || floatval($row->current_value) == $maxCurrentValue) {
-                            echo objectToTableRow($row);
-                        }
-                    }
-                    ?>
+                    <?php echo $zerodhaKite->getTbody(); ?>
                 </tbody>
             </table>
             <script type="text/javascript">
@@ -76,25 +71,18 @@
         </div>
 
         <?php if ($executeOrders > 0): ?>
-        <div class="order-execution">
-            <h3>Executed Orders:</h3>
-            <?php
-            $orders = $zerodhaKite->getKiteOrders();
-            foreach ($orders as $orderData) {
-                try {
-                    $order = $zerodhaKite->placeOrder("regular", $orderData);
-                    echo "<pre>" . print_r($order, true) . "</pre>";
-                } catch (Exception $e) {
-                    echo "<p class='error'>Error executing order: " . htmlspecialchars($e->getMessage()) . "</p>";
-                }
-            }
-            ?>
-        </div>
+            <div class="order-execution">
+                <h3>Executed Orders:</h3>
+                <?php
+                    print_r($zerodhaKite->getExecutedOrdersData());
+                ?>
+            </div>
         <?php endif; ?>
     </main>
 
     <footer>
-        <p>&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($config['app']['name']); ?>. All rights reserved.</p>
+        <p>&copy; <?php echo date('Y') . " " . htmlspecialchars($config['app']['name']); ?>. All rights reserved.</p>
     </footer>
 </body>
-</html> 
+
+</html>

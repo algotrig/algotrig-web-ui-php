@@ -19,25 +19,28 @@ class ZerodhaKite {
     private array $tradingSymbols;
     private array $quoteSymbols;
     private array $holdingKeys;
-    private array $dayPositions;
-    private array $dayPositionsKeys;
+    private array $dayPositionsObjects;
     private float $totalBuyAmount;
     private float $targetValue;
     private float $maxCurrentValue;
     private array $tradingData;
-
+    private array $executedOrders;
+    private array $executedOrdersData;
+    private array $failedOrders;
 
     public function __construct(array $config) {
         $this->config = $config;
         $this->stockExchangeKey = $config['stock_exchange_key'];
-        $this->dayPositions = [];
-        $this->dayPositionsKeys = [];
+        $this->dayPositionsObjects = [];
         $this->holdingKeys = [];
         $this->kiteOrders = [];
         $this->tradingSymbols = [];
         $this->quoteSymbols = [];
         $this->maxCurrentValue = 0.0;
         $this->targetValue = 0.0;
+        $this->executedOrders = [];
+        $this->executedOrdersData = [];
+        $this->failedOrders = [];
     }
 
     function initializeKite($accessToken) {
@@ -86,7 +89,11 @@ class ZerodhaKite {
 
         // Process trading data
         $this->processTradingData();
+
+        // Execute orders
+        $this->executeOrders();
     }
+
     /**
      * Fetch kiteHoldings from Kite
      */
@@ -117,15 +124,9 @@ class ZerodhaKite {
     function processDayPositions() {
         // Process kitePositions
         foreach ($this->kitePositions->day as $index => $position) {
-            $positionObj = new stdClass();
-            $positionObj->trading_symbol = $position->tradingsymbol;
-            $positionObj->quantity = $position->quantity;
-
-            $this->dayPositions[] = $positionObj;
-            $this->dayPositionsKeys[$position->tradingsymbol] = $index;
+            $this->dayPositionsObjects[$position->tradingsymbol] = $position;
         }
     }
-
 
     /**
      * Get trading symbols from kiteHoldings
@@ -151,10 +152,8 @@ class ZerodhaKite {
         // Update holding quantities with day kitePositions
         foreach ($this->tradingSymbols as $ts) {
             $holdingQty = $this->kiteHoldings[$this->holdingKeys[$ts]]->opening_quantity;
-            if (isset($this->dayPositionsKeys[$ts])) {
-                $key = $this->dayPositionsKeys[$ts];
-                $dhq = $this->dayPositions[$key]->quantity;
-                $holdingQty += intval($dhq);
+            if (isset($this->dayPositionsObjects[$ts])) {
+                $holdingQty += intval($this->dayPositionsObjects[$ts]->quantity);
             }
             $this->kiteHoldings[$this->holdingKeys[$ts]]->holding_quantity = $holdingQty;
         }
@@ -187,13 +186,17 @@ class ZerodhaKite {
                 continue;
             }
 
-            $quoteSymbol = "NSE:" . $symbol;
+            $quoteSymbol = $this->getQuoteSymbol($symbol);
             $ltp = (float)($this->kiteLtps->$quoteSymbol->last_price ?? 0);
             $holdingQty = $this->kiteHoldings[$this->holdingKeys[$symbol]]->holding_quantity ?? 0;
             $currentValue = (float)((int)$holdingQty * $ltp);
 
             $this->maxCurrentValue = max($this->maxCurrentValue, $currentValue);
         }
+    }
+
+    function getQuoteSymbol($symbol) {
+        return $this->stockExchangeKey . ":" . $symbol;
     }
 
     /**
@@ -207,7 +210,7 @@ class ZerodhaKite {
                 continue;
             }
 
-            $quoteSymbol = "NSE:" . $symbol;
+            $quoteSymbol = $this->getQuoteSymbol($symbol);
             $ltpObj = $this->kiteLtps->$quoteSymbol;
 
             $obj = new stdClass();
@@ -229,7 +232,7 @@ class ZerodhaKite {
             $difference = $this->targetValue - $currentValue;
             $obj->difference = number_format($difference, 2, '.', '');
 
-            $buyQty = $difference > 0.0 ? floor($difference / $ltp) : -1.0;
+            $buyQty = $difference > 0.0 ? floor($difference / $ltp) : 0.0;
 
             $obj->buy_qty = $buyQty;
             $buyAmount = $buyQty * $ltp;
@@ -249,12 +252,34 @@ class ZerodhaKite {
         }
     }
 
+    /**
+     * Execute orders
+     */
+    function executeOrders() {
+        foreach ($this->kiteOrders as $order) {
+            try {
+                $executedOrdersData = $this->placeOrder("regular", $order);
+                $this->executedOrders[] = $order;
+                $this->executedOrdersData[] = $executedOrdersData;
+            } catch (Exception $e) {
+                error_log("Error executing order: " . $e->getMessage());
+                $this->failedOrders[] = $order;
+            }
+        }
+    }
+
+    /**
+     * Get tradingData
+     */
     function getTradingData() {
         return $this->tradingData;
     }
 
-    function getKiteOrders() {
-        return $this->kiteOrders;
+    /**
+     * Get executedOrdersData
+     */
+    function getExecutedOrdersData() {
+        return $this->executedOrdersData;
     }
 
     /**
@@ -266,46 +291,11 @@ class ZerodhaKite {
     private function shouldSkipSymbol(string $symbol): bool {
         return in_array($symbol, ["SETFNIF50", "NIFTYBEES"]);
     }
-
-    /**
-     * Print LTPs
-     */
-    function printLTPs() {
-        echo "<pre>";
-        print_r($this->kiteLtps);
-        echo "</pre>";
-    }
-
-    /**
-     * Print kitePositions
-     */
-    function printPositions() {
-        echo "<pre>";
-        print_r($this->kitePositions);
-        echo "</pre>";
-    }
-
-    function getMaxCurrentValue(): float {
-        return $this->maxCurrentValue;
-    }
-
-    function setMaxCurrentValue(float $maxCurrentValue) {
-        $this->maxCurrentValue = $maxCurrentValue;
-    }
-
-    function setTargetValue(float $targetValue) {
-        $this->targetValue = $targetValue;
-    }
-
-    function getTotalBuyAmount(): float {
-        return $this->totalBuyAmount;
-    }
-
+      
     /**
      * Generate order data for a trading symbol
      *
      * @param object $obj The trading object
-     * @param object $kite The KiteConnect instance
      * @return array Order data
      */
     function getOrder(object $obj): array {
@@ -339,5 +329,52 @@ class ZerodhaKite {
 
     function placeOrder(string $orderType, array $orderData) {
         return $this->kite->placeOrder($orderType, $orderData);
+    }
+    
+    function getTbody(){
+        $targetValue = $this->getTargetValue();
+        $tbody = "";
+        foreach ($this->tradingData as $symbol => $row) {
+            if (floatval($row->difference) >= 0.0 || floatval($row->current_value) == $targetValue) {
+                $tbody .= objectToTableRow($row);
+            }
+        }
+        return $tbody;
+    }
+
+
+    /**
+     * Get maxCurrentValue
+     */
+    function getMaxCurrentValue(): float {
+        return $this->maxCurrentValue;
+    }
+
+    /**
+     * Set maxCurrentValue
+     */
+    function setMaxCurrentValue(float $maxCurrentValue) {
+        $this->maxCurrentValue = $maxCurrentValue;
+    }
+
+    /**
+     * Get targetValue
+     */
+    function getTargetValue(): float {
+        return $this->targetValue;
+    }
+
+    /**
+     * Set targetValue
+     */
+    function setTargetValue(float $targetValue) {
+        $this->targetValue = $targetValue;
+    }
+
+    /**
+     * Get totalBuyAmount
+     */
+    function getTotalBuyAmount(): float {
+        return $this->totalBuyAmount;
     }
 }

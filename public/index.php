@@ -40,10 +40,6 @@ $zerodhaKite->process($targetValue);
 $nifty50Quote = $config['zerodha']['stock_exchange_key'] . ":NIFTY 50";
 $nifty50Ltp = $zerodhaKite->fetchLTPforQuoteSymbol($nifty50Quote);
 
-
-
-$zerodhaKite->setTargetValue($targetValue);
-
 $tradingData = $zerodhaKite->getTradingData();
 $totalBuyAmount = $zerodhaKite->getTotalBuyAmount();
 
