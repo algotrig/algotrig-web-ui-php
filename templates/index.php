@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($config['app']['name']); ?> - PUBLIC</title>
     <link rel="stylesheet" href="/assets/css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.2.1/tablesort.min.js"></script>
 </head>
 <body>
     <header>
@@ -39,7 +40,7 @@
         </div>
 
         <div class="trading-table">
-            <table>
+            <table id="trading_table">
                 <thead>
                     <?php
                     $firstRow = reset($result);
@@ -60,6 +61,9 @@
                     ?>
                 </tbody>
             </table>
+            <script type="text/javascript">
+                new Tablesort(document.getElementById('trading_table'));
+            </script>
         </div>
 
         <?php if ($executeOrders > 0): ?>

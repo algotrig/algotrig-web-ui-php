@@ -137,11 +137,14 @@ tr:hover {
 .opening_quantity,
 .holding_quantity,
 .ltp,
+.current_value, 
+.proposed_value,
 .difference,
 .buy_qty,
 .buy_amt {
     text-align: right;
     font-family: monospace;
+    font-size: 1.1rem;
 }
 
 /* Order execution styles */

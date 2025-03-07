@@ -47,9 +47,9 @@ function objectToTableRow(object $object, bool $header = false): string
     
     foreach ($object as $key => $value) {
         if (($key === "current_value" || $key === "proposed_value") && !$header) {
-            $html .= "<td><a href=\"?execute_orders=0&target_value={$value}\">{$value}</a></td>";
+            $html .= "<td class=\"{$key}\"><a href=\"?execute_orders=0&target_value={$value}\">{$value}</a></td>";
         } else {
-            $keyDisplay = $header ? str_replace('_', '<br/>', $key) : $key;
+            $keyDisplay = strtoupper($header ? str_replace('_', '<br/>', $key) : $key);
             $html .= !$header 
                 ? "<td class=\"{$key}\">{$value}</td>" 
                 : "<td>{$keyDisplay}</td>";

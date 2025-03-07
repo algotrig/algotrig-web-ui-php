@@ -15,6 +15,7 @@ RewriteCond %{REQUEST_FILENAME} !-d
 
 # And if the request is not already for something in the public folder
 RewriteCond %{REQUEST_URI} !^/public/
+RewriteCond %{REQUEST_URI} !^/assets/
 
 # Rewrite to the public folder
 RewriteRule ^(.*)$ public/$1 [L]
