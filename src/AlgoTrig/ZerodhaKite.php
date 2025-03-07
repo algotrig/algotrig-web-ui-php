@@ -195,8 +195,11 @@ class ZerodhaKite {
         }
     }
 
-    function getQuoteSymbol($symbol) {
-        return $this->stockExchangeKey . ":" . $symbol;
+    /**
+     * Get quote symbol for a trading symbol
+     */
+    function getQuoteSymbol($tradingSymbol) {
+        return $this->stockExchangeKey . ":" . $tradingSymbol;
     }
 
     /**
@@ -258,11 +261,12 @@ class ZerodhaKite {
     function executeOrders() {
         foreach ($this->kiteOrders as $order) {
             try {
-                $executedOrdersData = $this->placeOrder("regular", $order);
+                $executedOrdersData = $this->kite->placeOrder("regular", $order);
                 $this->executedOrders[] = $order;
                 $this->executedOrdersData[] = $executedOrdersData;
             } catch (Exception $e) {
                 error_log("Error executing order: " . $e->getMessage());
+                $order['error'] = $e;
                 $this->failedOrders[] = $order;
             }
         }
@@ -327,10 +331,9 @@ class ZerodhaKite {
         ];
     }
 
-    function placeOrder(string $orderType, array $orderData) {
-        return $this->kite->placeOrder($orderType, $orderData);
-    }
-    
+    /**
+     * Get tbody html for tradingData
+     */
     function getTbody(){
         $targetValue = $this->getTargetValue();
         $tbody = "";
@@ -376,5 +379,12 @@ class ZerodhaKite {
      */
     function getTotalBuyAmount(): float {
         return $this->totalBuyAmount;
+    }
+
+    /**
+     * Get failedOrders
+     */
+    function getFailedOrders(){
+        return $this->failedOrders;
     }
 }

@@ -73,9 +73,12 @@
         <?php if ($executeOrders > 0): ?>
             <div class="order-execution">
                 <h3>Executed Orders:</h3>
+                <pre>
                 <?php
                     print_r($zerodhaKite->getExecutedOrdersData());
+                    print_r($zerodhaKite->getFailedOrders());
                 ?>
+                </pre>
             </div>
         <?php endif; ?>
     </main>
