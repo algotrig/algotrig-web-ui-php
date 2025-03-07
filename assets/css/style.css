@@ -72,7 +72,7 @@ header {
 
 /* Main content styles */
 main {
-    max-width: 1200px;
+    max-width: 1350px;
     margin: 0 auto;
     padding: 0 1rem;
 }
@@ -103,6 +103,15 @@ main {
     font-size: 1.1rem;
 }
 
+.summary table {
+    width: 270px;
+}
+
+.summary .numeric-value {
+    text-align: right;
+    width: 104px;
+}
+
 /* Table styles */
 .trading-table {
     background-color: #fff;
@@ -127,6 +136,7 @@ th, td {
 th {
     background-color: #f8f9fa;
     font-weight: 600;
+    text-align: center;
 }
 
 tr:hover {
@@ -145,7 +155,10 @@ tr:hover {
     text-align: right;
     font-family: monospace;
     font-size: 1.1rem;
+    width: 104px;
 }
+
+
 
 /* Order execution styles */
 .order-execution {

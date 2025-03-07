@@ -26,24 +26,9 @@ function loadConfig(string $iniFile): array
     $config = [
         'app' => [
             'name' => 'AlgoTrig',
-            'debug' => false,
+            'version' => '0.1.0',
+            'env' => 'LOCAL',
             'timezone' => 'Asia/Kolkata',
-        ],
-        'zerodha' => [
-            'api_url' => 'https://api.kite.trade',
-        ],
-        'session' => [
-            'lifetime' => 3600,
-            'path' => '/',
-            'domain' => 'https://algotrig.local/',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'Strict',
-        ],
-        'refresh' => [
-            'default_interval' => 300, // 5 minutes
-            'min_interval' => 60,      // 1 minute
-            'max_interval' => 3600,    // 1 hour
         ],
     ];
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($config['app']['name']); ?> - PUBLIC</title>
+    <title><?php echo htmlspecialchars($config['app']['name'] . " - " . $config['app']['env']); ?></title>
     <link rel="stylesheet" href="/assets/css/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.2.1/tablesort.min.js"></script>
 </head>
@@ -35,27 +35,36 @@
         </div>
 
         <div class="summary">
-            <p>Max Current Value = <?php echo formatNumber($maxCurrentValue); ?></p>
-            <p>Total Buy Amount = <?php echo formatNumber($totalBuyAmount); ?></p>
+            <table>
+                <tr>
+                    <td>Max Current Value:</td>
+                    <td class="numeric-value"><?php echo getAnchor(formatNumber($zerodhaKite->getMaxCurrentValue())); ?></td>
+                </tr>
+                <tr>
+                    <td>Target Value:</td>
+                    <td class="numeric-value"><?php echo getAnchor(formatNumber($targetValue)); ?></td>
+                </tr>
+                <tr>
+                    <td>Total Buy Amount:</td>
+                    <td class="numeric-value"><?php echo formatNumber($totalBuyAmount); ?></td>
+                </tr>
+            </table>
         </div>
 
         <div class="trading-table">
             <table id="trading_table">
                 <thead>
                     <?php
-                    $firstRow = reset($result);
+                    $firstRow = reset($tradingData);
                     echo objectToTableRow($firstRow, true);
                     ?>
                 </thead>
                 <tbody>
                     <?php
-                    $orders = [];
-                    foreach ($result as $symbol => $row) {
-                        if ((int)$row->buy_qty > 0 || $row->current_value === $maxCurrentValue) {
+                    $maxCurrentValue = $zerodhaKite->getMaxCurrentValue();
+                    foreach ($tradingData as $symbol => $row) {
+                        if ($row->buy_qty >= 0 || floatval($row->current_value) == $maxCurrentValue) {
                             echo objectToTableRow($row);
-                            if ((int)$row->buy_qty > 0) {
-                                $orders[] = getOrder($row, $kite);
-                            }
                         }
                     }
                     ?>
@@ -70,9 +79,10 @@
         <div class="order-execution">
             <h3>Executed Orders:</h3>
             <?php
+            $orders = $zerodhaKite->getKiteOrders();
             foreach ($orders as $orderData) {
                 try {
-                    $order = $kite->placeOrder("regular", $orderData);
+                    $order = $zerodhaKite->placeOrder("regular", $orderData);
                     echo "<pre>" . print_r($order, true) . "</pre>";
                 } catch (Exception $e) {
                     echo "<p class='error'>Error executing order: " . htmlspecialchars($e->getMessage()) . "</p>";

@@ -3,56 +3,26 @@
 declare(strict_types=1);
 
 /**
- * Trading related functions for the AlgoTrig application
- */
-
-/**
- * Get trading symbols from holdings
- *
- * @param array $holdings Array of holding objects
- * @return array{ trading_symbols: array, quote_symbols: array, holding_keys: array }
- */
-function getTradingSymbols(array $holdings): array
-{
-    $holdingKeys = [];
-    $tradingSymbols = [];
-    $quoteSymbols = [];
-
-    foreach ($holdings as $index => $holding) {
-        $tradingSymbol = $holding->tradingsymbol;
-        $quoteSymbol = "NSE:" . $tradingSymbol;
-        
-        $tradingSymbols[] = $tradingSymbol;
-        $quoteSymbols[] = $quoteSymbol;
-        $holdingKeys[$tradingSymbol] = $index;
-    }
-
-    return [
-        'trading_symbols' => $tradingSymbols,
-        'quote_symbols' => $quoteSymbols,
-        'holding_keys' => $holdingKeys
-    ];
-}
-
-/**
  * Convert an object to an HTML table row
  *
  * @param object $object The object to convert
  * @param bool $header Whether this is a header row
  * @return string HTML table row
  */
-function objectToTableRow(object $object, bool $header = false): string
-{
+function objectToTableRow(object $object, bool $header = false, bool $hideQuoteSymbol = true, bool $hideInstrumentToken = true): string {
     $html = "<tr>";
-    
+
     foreach ($object as $key => $value) {
+        if (($hideQuoteSymbol && $key === "quote_symbol") || ($hideInstrumentToken && $key === "instrument_token")) {
+            continue;
+        }
         if (($key === "current_value" || $key === "proposed_value") && !$header) {
-            $html .= "<td class=\"{$key}\"><a href=\"?execute_orders=0&target_value={$value}\">{$value}</a></td>";
+            $html .= getTd($key, $value, true);
         } else {
             $keyDisplay = strtoupper($header ? str_replace('_', '<br/>', $key) : $key);
-            $html .= !$header 
-                ? "<td class=\"{$key}\">{$value}</td>" 
-                : "<td>{$keyDisplay}</td>";
+            $html .= !$header
+                ? getTd($key, $value)
+                : "<th>{$keyDisplay}</th>";
         }
     }
 
@@ -61,40 +31,31 @@ function objectToTableRow(object $object, bool $header = false): string
 }
 
 /**
- * Generate order data for a trading symbol
+ * Get a table data element
  *
- * @param object $obj The trading object
- * @param object $kite The KiteConnect instance
- * @return array Order data
+ * @param string $key The key
+ * @param mixed $value The value
+ * @param bool $withAnchor Whether to include an anchor element
  */
-function getOrder(object $obj, object $kite): array
-{
-    $isSpecialSymbol = in_array($obj->trading_symbol, ["FMCGIETF", "HDFCSENSEX"]);
-    
-    if ($isSpecialSymbol) {
-        $quoteSymbols = [$obj->quote_symbol];
-        $quotes = $kite->getQuote($quoteSymbols);
-        $price = $quotes[$obj->quote_symbol]->depth->sell[4]->price;
-        
-        return [
-            "tradingsymbol" => $obj->trading_symbol,
-            "exchange" => "NSE",
-            "quantity" => $obj->buy_qty,
-            "transaction_type" => "BUY",
-            "order_type" => "LIMIT",
-            "price" => $price,
-            "product" => "CNC"
-        ];
+function getTd($key, $value, bool $withAnchor = false) {
+    if ($withAnchor) {
+        return "<td class=\"{$key}\">" . getAnchor($value) . "</td>";
     }
+    return "<td class=\"{$key}\">{$value}</td>";
+}
 
-    return [
-        "tradingsymbol" => $obj->trading_symbol,
-        "exchange" => "NSE",
-        "quantity" => $obj->buy_qty,
-        "transaction_type" => "BUY",
-        "order_type" => "MARKET",
-        "product" => "CNC"
-    ];
+/**
+ * Get an anchor element with the target value
+ *
+ * @param float $targetValue The target value
+ * @param int $executeOrders The number of execute orders
+ * @param bool $withRefresh Whether to include a refresh interval
+ * @param int $refreshInterval The refresh interval
+ * @return string HTML anchor element
+ */
+function getAnchor($targetValue, int $executeOrders = 0, bool $withRefresh = false, int $refreshInterval = 0) {
+    $refresh = $withRefresh ? "&r={$refreshInterval}" : "";
+    return "<a href=\"?execute_orders={$executeOrders}&target_value={$targetValue}{$refresh}\">{$targetValue}</a>";
 }
 
 /**
@@ -104,8 +65,7 @@ function getOrder(object $obj, object $kite): array
  * @param int $decimals Number of decimal places
  * @return string Formatted number
  */
-function formatNumber(float $number, int $decimals = 2): string
-{
+function formatNumber(float $number, int $decimals = 2): string {
     return number_format($number, $decimals, '.', '');
 }
 
@@ -115,10 +75,9 @@ function formatNumber(float $number, int $decimals = 2): string
  * @param int $interval The refresh interval in seconds
  * @return int Validated interval
  */
-function validateRefreshInterval(int $interval, array $config): int
-{
+function validateRefreshInterval(int $interval, array $config): int {
     $minInterval = $config['refresh']['min_interval'];
     $maxInterval = $config['refresh']['max_interval'];
-    
+
     return max($minInterval, min($maxInterval, $interval));
-} 
+}
