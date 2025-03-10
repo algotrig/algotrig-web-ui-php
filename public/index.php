@@ -35,7 +35,7 @@ header("Refresh: {$refreshInterval}");
 
 $zerodhaKite = new ZerodhaKite($config['zerodha']);
 $zerodhaKite->initializeKite($_SESSION['access_token']);
-$zerodhaKite->process($targetValue);
+$zerodhaKite->process($targetValue, $executeOrders);
 
 $nifty50Quote = $config['zerodha']['stock_exchange_key'] . ":NIFTY 50";
 $nifty50Ltp = $zerodhaKite->fetchLTPforQuoteSymbol($nifty50Quote);

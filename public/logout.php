@@ -39,17 +39,14 @@ if (isset($_COOKIE[session_name()])) {
         time() - 3600,
         $config['session']['path'],
         $config['session']['domain'],
-        $config['session']['secure'],
-        $config['session']['httponly']
+        boolval($config['session']['secure']),
+        boolval($config['session']['httponly'])
     );
 }
 
 // Destroy the session
 session_destroy();
 
-// Redirect to login page
-//header('Location: /login.php');
-//exit; 
 ?>
 <!DOCTYPE html>
 <html lang="en">

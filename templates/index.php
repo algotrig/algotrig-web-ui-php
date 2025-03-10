@@ -19,10 +19,10 @@
                 Refresh: <?php echo $refreshInterval; ?> seconds
             </div>
             <div class="actions">
-                <a href="/logout.php" class="btn btn-danger">Logout</a>
+                <a href="/?execute_orders=1&target_value=<?php echo $targetValue; ?>&r=<?php echo $refreshInterval; ?>" class="btn btn-success">Execute</a>
                 <a href="/?execute_orders=0&r=<?php echo $refreshInterval; ?>" class="btn btn-primary">Refresh</a>
                 <a href="/?execute_orders=0&target_value=<?php echo $targetValue; ?>&r=<?php echo $refreshInterval; ?>" class="btn btn-secondary">Refresh [TV]</a>
-                <a href="/?execute_orders=1&target_value=<?php echo $targetValue; ?>&r=<?php echo $refreshInterval; ?>" class="btn btn-success">Execute</a>
+                <a href="/logout.php" class="btn btn-danger">Logout</a>
             </div>
         </div>
     </header>
@@ -73,12 +73,17 @@
         <?php if ($executeOrders > 0): ?>
             <div class="order-execution">
                 <h3>Executed Orders:</h3>
-                <pre>
                 <?php
+                    echo "<pre>";
                     print_r($zerodhaKite->getExecutedOrdersData());
-                    print_r($zerodhaKite->getFailedOrders());
+                    echo "</pre>";
                 ?>
-                </pre>
+                <h3>Failed Orders:</h3>
+                <?php
+                    echo "<pre>";
+                    print_r($zerodhaKite->getFailedOrders());
+                    echo "</pre>";
+                ?>
             </div>
         <?php endif; ?>
     </main>

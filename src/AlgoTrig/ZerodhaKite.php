@@ -57,7 +57,7 @@ class ZerodhaKite {
         }
     }
 
-    function process($targetValue = 0.0) {
+    function process($targetValue = 0.0, $executeOrders = 0) {
         // Fetch kiteHoldings
         $this->fetchHoldings();
 
@@ -91,7 +91,9 @@ class ZerodhaKite {
         $this->processTradingData();
 
         // Execute orders
-        $this->executeOrders();
+        if ($executeOrders === 1) {
+            $this->executeOrders();
+        }
     }
 
     /**
@@ -249,7 +251,7 @@ class ZerodhaKite {
             }
 
             $this->tradingData[$symbol] = $obj;
-            if ($obj->buy_qty >= 0) {
+            if ($obj->buy_qty > 0) {
                 $this->kiteOrders[] = $this->getOrder($obj);
             }
         }
