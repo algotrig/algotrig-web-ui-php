@@ -184,7 +184,7 @@ class ZerodhaKite {
      */
     function calculateMaxCurrentValue() {
         foreach ($this->tradingSymbols as $symbol) {
-            if (in_array($symbol, ["SETFNIF50", "NIFTYBEES"])) {
+            if ($this->shouldSkipSymbol($symbol)) {
                 continue;
             }
 
@@ -295,7 +295,7 @@ class ZerodhaKite {
      * @return bool True if symbol should be skipped
      */
     private function shouldSkipSymbol(string $symbol): bool {
-        return in_array($symbol, ["SETFNIF50", "NIFTYBEES"]);
+        return in_array($symbol, ["SETFNIF50", "NIFTYBEES", "LIQUIDBEES"]);
     }
       
     /**
