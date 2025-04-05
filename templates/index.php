@@ -55,15 +55,11 @@
 
         <div class="trading-table">
             <table id="trading_table">
-                <thead>
-                    <?php
+                <?php
                     $firstRow = reset($tradingData);
-                    echo objectToTableRow($firstRow, true);
-                    ?>
-                </thead>
-                <tbody>
-                    <?php echo $zerodhaKite->getTbody(); ?>
-                </tbody>
+                    echo objectToTableHeader($firstRow, true);
+                    echo getTbody($zerodhaKite);
+                ?>
             </table>
             <script type="text/javascript">
                 new Tablesort(document.getElementById('trading_table'));

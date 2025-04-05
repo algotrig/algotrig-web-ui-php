@@ -57,7 +57,7 @@ class ZerodhaKite {
         }
     }
 
-    function process($targetValue = 0.0, $executeOrders = 0) {
+    function process($targetValue = 0.0) {
         // Fetch kiteHoldings
         $this->fetchHoldings();
 
@@ -89,11 +89,6 @@ class ZerodhaKite {
 
         // Process trading data
         $this->processTradingData();
-
-        // Execute orders
-        if ($executeOrders === 1) {
-            $this->executeOrders();
-        }
     }
 
     /**
@@ -297,7 +292,7 @@ class ZerodhaKite {
     private function shouldSkipSymbol(string $symbol): bool {
         return in_array($symbol, ["SETFNIF50", "NIFTYBEES", "LIQUIDBEES"]);
     }
-      
+
     /**
      * Generate order data for a trading symbol
      *
@@ -332,21 +327,6 @@ class ZerodhaKite {
             "product" => "CNC"
         ];
     }
-
-    /**
-     * Get tbody html for tradingData
-     */
-    function getTbody(){
-        $targetValue = $this->getTargetValue();
-        $tbody = "";
-        foreach ($this->tradingData as $symbol => $row) {
-            if (floatval($row->difference) >= 0.0 || floatval($row->current_value) == $targetValue) {
-                $tbody .= objectToTableRow($row);
-            }
-        }
-        return $tbody;
-    }
-
 
     /**
      * Get maxCurrentValue
@@ -386,7 +366,7 @@ class ZerodhaKite {
     /**
      * Get failedOrders
      */
-    function getFailedOrders(){
+    function getFailedOrders() {
         return $this->failedOrders;
     }
 }

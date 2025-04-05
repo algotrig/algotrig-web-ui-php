@@ -2,31 +2,67 @@
 
 declare(strict_types=1);
 
+use AlgoTrig\ZerodhaKite;
+
+/**
+ * Get tbody html for tradingData
+ *
+ * @param ZerodhaKite $kite The ZerodhaKite object that has tradingData
+ * @return string HTML tbody
+ */
+function getTbody(ZerodhaKite $kite): string {
+    $targetValue = $kite->getTargetValue();
+    $tbody = "<tbody>";
+    foreach ($kite->getTradingData() as $symbol => $row) {
+        if (floatval($row->difference) >= 0.0 || floatval($row->current_value) == $targetValue) {
+            $tbody .= objectToTableRow($row);
+        }
+    }
+    $tbody .= "</tbody>";
+    return $tbody;
+}
+
 /**
  * Convert an object to an HTML table row
  *
  * @param object $object The object to convert
- * @param bool $header Whether this is a header row
+ * @param bool $hideQuoteSymbol Whether to hide quote_symbol column, default = true
+ * @param bool $hideInstrumentToken Whether to hide instrument_token column, default = true
  * @return string HTML table row
  */
-function objectToTableRow(object $object, bool $header = false, bool $hideQuoteSymbol = true, bool $hideInstrumentToken = true): string {
+function objectToTableRow(object $object, bool $hideQuoteSymbol = true, bool $hideInstrumentToken = true): string {
     $html = "<tr>";
-
     foreach ($object as $key => $value) {
         if (($hideQuoteSymbol && $key === "quote_symbol") || ($hideInstrumentToken && $key === "instrument_token")) {
             continue;
         }
-        if (($key === "current_value" || $key === "proposed_value") && !$header) {
-            $html .= getTd($key, $value, true);
-        } else {
-            $keyDisplay = strtoupper($header ? str_replace('_', '<br/>', $key) : $key);
-            $html .= !$header
-                ? getTd($key, $value)
-                : "<th>{$keyDisplay}</th>";
+        if ($key === "current_value" || $key === "proposed_value") {
+            $value = getAnchor($value);
         }
+        $html .= getTd($key, $value);
     }
-
     $html .= "</tr>";
+    return $html;
+}
+
+/**
+ * Convert an object to an HTML table row
+ *
+ * @param object $object The object to convert
+ * @param bool $hideQuoteSymbol Whether to hide quote_symbol column, default = true
+ * @param bool $hideInstrumentToken Whether to hide instrument_token column, default = true
+ * @return string HTML table header
+ */
+function objectToTableHeader(object $object, bool $hideQuoteSymbol = true, bool $hideInstrumentToken = true): string {
+    $html = "<thead>";
+    foreach ($object as $key => $value) {
+        if (($hideQuoteSymbol && $key === "quote_symbol") || ($hideInstrumentToken && $key === "instrument_token")) {
+            continue;
+        }
+        $keyDisplay = strtoupper(str_replace('_', '<br/>', $key));
+        $html .= "<th>{$keyDisplay}</th>";
+    }
+    $html .= "</thead>";
     return $html;
 }
 
@@ -35,12 +71,9 @@ function objectToTableRow(object $object, bool $header = false, bool $hideQuoteS
  *
  * @param string $key The key
  * @param mixed $value The value
- * @param bool $withAnchor Whether to include an anchor element
+ * @return string The HTML Table TD tag string
  */
-function getTd($key, $value, bool $withAnchor = false) {
-    if ($withAnchor) {
-        return "<td class=\"{$key}\">" . getAnchor($value) . "</td>";
-    }
+function getTd($key, $value): string {
     return "<td class=\"{$key}\">{$value}</td>";
 }
 
@@ -53,7 +86,7 @@ function getTd($key, $value, bool $withAnchor = false) {
  * @param int $refreshInterval The refresh interval
  * @return string HTML anchor element
  */
-function getAnchor($targetValue, int $executeOrders = 0, bool $withRefresh = false, int $refreshInterval = 0) {
+function getAnchor($targetValue, int $executeOrders = 0, bool $withRefresh = false, int $refreshInterval = 0): string {
     $refresh = $withRefresh ? "&r={$refreshInterval}" : "";
     return "<a href=\"?execute_orders={$executeOrders}&target_value={$targetValue}{$refresh}\">{$targetValue}</a>";
 }
