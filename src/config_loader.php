@@ -49,29 +49,7 @@ function loadConfig(string $iniFile): array {
 
     // Merge INI configuration with defaults
     $config = array_replace_recursive($config, $iniConfig);
-
-    // Validate required configuration values
-    $requiredValues = [
-        'zerodha.api_key' => 'Zerodha API Key',
-        'zerodha.secret' => 'Zerodha Secret Key'
-    ];
-
-    foreach ($requiredValues as $path => $name) {
-        $keys = explode('.', $path);
-        $value = $config;
-
-        foreach ($keys as $key) {
-            if (!isset($value[$key])) {
-                throw new RuntimeException("Required configuration value '{$name}' is missing in {$iniFile}");
-            }
-            $value = $value[$key];
-        }
-
-        if (empty($value)) {
-            throw new RuntimeException("Required configuration value '{$name}' cannot be empty in {$iniFile}");
-        }
-    }
-
+    
     return $config;
 }
 

@@ -32,19 +32,23 @@ $executeOrders = isset($_GET['execute_orders']) ? (int)$_GET['execute_orders'] :
 // Set refresh header
 header("Refresh: {$refreshInterval}");
 
-$zerodhaKite = new ZerodhaKite($config['zerodha']);
-$zerodhaKite->initializeKite($_SESSION['access_token']);
-$zerodhaKite->process($targetValue);
-// Execute Orders
-if ($executeOrders === 1) {
-    $zerodhaKite->executeOrders();
+try {
+    $zerodhaKite = new ZerodhaKite($config['zerodha']);
+    $zerodhaKite->initializeKite($_SESSION['access_token']);
+    $zerodhaKite->process($targetValue);
+    // Execute Orders
+    if ($executeOrders === 1) {
+        $zerodhaKite->executeOrders();
+    }
+
+    $nifty50Quote = $config['zerodha']['stock_exchange_key'] . ":NIFTY 50";
+    $nifty50Ltp = $zerodhaKite->fetchLTPforQuoteSymbol($nifty50Quote);
+
+    $tradingData = $zerodhaKite->getTradingData();
+    $totalBuyAmount = $zerodhaKite->getTotalBuyAmount();
+} catch (Exception $e) {
+    die("Something went wrong: " . $e->getMessage());
 }
-
-$nifty50Quote = $config['zerodha']['stock_exchange_key'] . ":NIFTY 50";
-$nifty50Ltp = $zerodhaKite->fetchLTPforQuoteSymbol($nifty50Quote);
-
-$tradingData = $zerodhaKite->getTradingData();
-$totalBuyAmount = $zerodhaKite->getTotalBuyAmount();
 
 // Include the template
 require __DIR__ . '/../templates/index.php';

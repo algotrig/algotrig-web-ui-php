@@ -7,6 +7,7 @@ namespace AlgoTrig;
 use KiteConnect\KiteConnect;
 use stdClass;
 use Exception;
+use RuntimeException;
 
 class ZerodhaKite {
     private KiteConnect $kite;
@@ -29,6 +30,7 @@ class ZerodhaKite {
     private array $failedOrders;
 
     public function __construct(array $config) {
+        $this->validate($config);
         $this->config = $config;
         $this->stockExchangeKey = $config['stock_exchange_key'];
         $this->dayPositionsObjects = [];
@@ -43,6 +45,11 @@ class ZerodhaKite {
         $this->failedOrders = [];
     }
 
+    /**
+     * Initialize KiteConnect object
+     * 
+     * @param string $accessToken The access token received from Zerodha Kite after successful login
+     */
     function initializeKite($accessToken) {
         // Initialize KiteConnect
         try {
@@ -57,7 +64,30 @@ class ZerodhaKite {
         }
     }
 
-    function process($targetValue = 0.0) {
+    /**
+     * Validate required configuration values
+     * 
+     * @param array $config The config array containing the configuration values
+     */
+    private function validate(array $config) {
+        $requiredValues = [
+            'api_key' => 'Zerodha API Key',
+            'secret' => 'Zerodha Secret Key'
+        ];
+
+        foreach ($requiredValues as $path => $name) {
+            if (!isset($config[$path]) || empty($config[$path])) {
+                throw new RuntimeException("Required configuration value '{$name}' is missing or invalid for Zerodha Kite");
+            }
+        }
+    }
+
+    /**
+     * Process the Trading Data as per the Holdings, Positions and LTP
+     * 
+     * @param float $targetValue The target value for Holdings to execute the buy trades
+     */
+    function process(float $targetValue = 0.0) {
         // Fetch kiteHoldings
         $this->fetchHoldings();
 
@@ -126,9 +156,7 @@ class ZerodhaKite {
     }
 
     /**
-     * Get trading symbols from kiteHoldings
-     *
-     * @return array{ trading_symbols: array, quote_symbols: array, holding_keys: array }
+     * Get trading symbols, quote symbols and holding keys from kiteHoldings
      */
     function processSymbols() {
         foreach ($this->kiteHoldings as $index => $holding) {
@@ -138,7 +166,12 @@ class ZerodhaKite {
         }
     }
 
-    function addQuoteSymbol($quoteSymbol) {
+    /**
+     * Add the given quote symbol to the existing list
+     * 
+     * @param string $quoteSymbol The quote symbol to be added
+     */
+    function addQuoteSymbol(string $quoteSymbol) {
         $this->quoteSymbols[] = $quoteSymbol;
     }
 
@@ -169,7 +202,13 @@ class ZerodhaKite {
         }
     }
 
-    function fetchLTPforQuoteSymbol($quoteSymbol) {
+    /**
+     * Fetch LTP for given quote symbol from fetched LTPs
+     * 
+     * @param string $quoteSymbol The quote symbol for which the LTP is to be fetched
+     * @return float The LTP
+     */
+    function fetchLTPforQuoteSymbol(string $quoteSymbol): float {
         $ltp = (float)($this->kiteLtps->$quoteSymbol->last_price ?? 0);
         return $ltp;
     }
@@ -194,8 +233,11 @@ class ZerodhaKite {
 
     /**
      * Get quote symbol for a trading symbol
+     * 
+     * @param string $tradingSymbol
+     * @return string The quote symbol
      */
-    function getQuoteSymbol($tradingSymbol) {
+    function getQuoteSymbol(string $tradingSymbol): string {
         return $this->stockExchangeKey . ":" . $tradingSymbol;
     }
 
@@ -272,14 +314,14 @@ class ZerodhaKite {
     /**
      * Get tradingData
      */
-    function getTradingData() {
+    function getTradingData(): array {
         return $this->tradingData;
     }
 
     /**
      * Get executedOrdersData
      */
-    function getExecutedOrdersData() {
+    function getExecutedOrdersData(): array {
         return $this->executedOrdersData;
     }
 
