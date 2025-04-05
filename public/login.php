@@ -3,16 +3,12 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../src/config.php';
+require_once __DIR__ . '/../src/config_loader.php';
 
 use KiteConnect\KiteConnect;
 
 // Load configuration
-try {
-    $config = loadConfig(__DIR__ . '/../algotrig.ini');
-} catch (RuntimeException $e) {
-    die("Configuration Error: " . $e->getMessage());
-}
+$config = loadAppConfig(__DIR__ . '/../algotrig.ini');
 
 session_start();
 
