@@ -6,22 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($config['app']['name'] . " - " . $config['app']['env']); ?></title>
     <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon.ico">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.2.1/tablesort.min.js"></script>
 </head>
 
 <body>
     <header>
         <div class="header-content">
-            <div class="time-info">
-                Current time: <?php echo date('d-m-Y H:i:s A'); ?>
-            </div>
-            <div class="refresh-info">
-                Refresh: <?php echo $refreshInterval; ?> seconds
+            <div class="header-logo">
+                <span class="algo">Algo</span><span class="trig">Trig</span>
             </div>
             <div class="actions">
                 <a href="/?execute_orders=1&target_value=<?php echo $targetValue; ?>&r=<?php echo $refreshInterval; ?>" class="btn btn-success">Execute</a>
                 <a href="/?execute_orders=0&r=<?php echo $refreshInterval; ?>" class="btn btn-primary">Refresh</a>
-                <a href="/?execute_orders=0&target_value=<?php echo $targetValue; ?>&r=<?php echo $refreshInterval; ?>" class="btn btn-secondary">Refresh [TV]</a>
                 <a href="/logout.php" class="btn btn-danger">Logout</a>
             </div>
         </div>
@@ -34,6 +31,11 @@
                     <?php echo formatNumber($nifty50Ltp); ?>
                 </a>
             </h2>
+            <div class="time-info">
+                Executed at: <span class="font-bold"><?php echo date('d-M-Y H:i:s A'); ?></span>
+                <br/>
+                Refresh Interval: <span class="font-bold"><?php echo $refreshInterval; ?> seconds</span>
+            </div>
         </div>
 
         <div class="summary">
@@ -56,9 +58,9 @@
         <div class="trading-table">
             <table id="trading_table">
                 <?php
-                    $firstRow = reset($tradingData);
-                    echo objectToTableHeader($firstRow, true);
-                    echo getTbody($zerodhaKite);
+                $firstRow = reset($tradingData);
+                echo objectToTableHeader($firstRow, true);
+                echo getTbody($zerodhaKite);
                 ?>
             </table>
             <script type="text/javascript">
@@ -70,15 +72,15 @@
             <div class="order-execution">
                 <h3>Executed Orders:</h3>
                 <?php
-                    echo "<pre>";
-                    print_r($zerodhaKite->getExecutedOrdersData());
-                    echo "</pre>";
+                echo "<pre>";
+                print_r($zerodhaKite->getExecutedOrdersData());
+                echo "</pre>";
                 ?>
                 <h3>Failed Orders:</h3>
                 <?php
-                    echo "<pre>";
-                    print_r($zerodhaKite->getFailedOrders());
-                    echo "</pre>";
+                echo "<pre>";
+                print_r($zerodhaKite->getFailedOrders());
+                echo "</pre>";
                 ?>
             </div>
         <?php endif; ?>
