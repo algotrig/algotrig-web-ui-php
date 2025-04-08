@@ -5,9 +5,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../src/functions.php';
 require_once __DIR__ . '/../src/config_loader.php';
-require_once __DIR__ . '/../src/AlgoTrig/ZerodhaKite.php';
 
-use AlgoTrig\ZerodhaKite;
+use AlgoTrig\PhpCore\ZerodhaKite;
 
 // Load configuration
 $config = loadAppConfig(__DIR__ . '/../algotrig.ini');

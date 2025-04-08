@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use AlgoTrig\ZerodhaKite;
+use AlgoTrig\PhpCore\ZerodhaKite;
 
 /**
  * Get tbody html for tradingData

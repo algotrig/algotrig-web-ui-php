@@ -4,8 +4,60 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6cc2c9753ea413b52b692160d7206f4c",
+    "content-hash": "8c3bf4daa6844f4bf57a0486f74de9f4",
     "packages": [
+        {
+            "name": "algotrig/algotrig-php-core",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/algotrig/algotrig-php-core.git",
+                "reference": "cf88c8b222c2f7d3d11358c7e1b6c1eb0de5a535"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/algotrig/algotrig-php-core/zipball/cf88c8b222c2f7d3d11358c7e1b6c1eb0de5a535",
+                "reference": "cf88c8b222c2f7d3d11358c7e1b6c1eb0de5a535",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0",
+                "zerodha/phpkiteconnect": "^4.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "AlgoTrig\\PhpCore\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "AlgoTrig - Chitrang Shah",
+                    "email": "algotrig@outlook.com",
+                    "homepage": "https://algotrig.in",
+                    "role": "Founder"
+                }
+            ],
+            "description": "A lightweight core PHP library for integrating Zerodha Kite Connect with AlgoTrig, providing a foundation for custom trading algorithms.",
+            "homepage": "https://github.com/AlgoTrig/algotrig-php-core",
+            "keywords": [
+                "algotrading",
+                "algotrig",
+                "kiteconnect",
+                "php",
+                "trading",
+                "zerodha"
+            ],
+            "support": {
+                "issues": "https://github.com/AlgoTrig/algotrig-php-core/issues",
+                "source": "https://github.com/AlgoTrig/algotrig-php-core"
+            },
+            "time": "2025-04-05T20:55:15+00:00"
+        },
         {
             "name": "guzzlehttp/guzzle",
             "version": "7.8.2",
@@ -134,16 +186,16 @@
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "2.0.4",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "f9c436286ab2892c7db7be8c8da4ef61ccf7b455"
+                "reference": "7c69f28996b0a6920945dd20b3857e499d9ca96c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/f9c436286ab2892c7db7be8c8da4ef61ccf7b455",
-                "reference": "f9c436286ab2892c7db7be8c8da4ef61ccf7b455",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/7c69f28996b0a6920945dd20b3857e499d9ca96c",
+                "reference": "7c69f28996b0a6920945dd20b3857e499d9ca96c",
                 "shasum": ""
             },
             "require": {
@@ -197,7 +249,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/promises/issues",
-                "source": "https://github.com/guzzle/promises/tree/2.0.4"
+                "source": "https://github.com/guzzle/promises/tree/2.2.0"
             },
             "funding": [
                 {
@@ -213,7 +265,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-10-17T10:06:22+00:00"
+            "time": "2025-03-27T13:27:01+00:00"
         },
         {
             "name": "guzzlehttp/psr7",

@@ -1,5 +1,5 @@
 {
     "require": {
-        "zerodha/phpkiteconnect": "^4.2"
+        "algotrig/algotrig-php-core": "^0.1.0"
     }
 }
