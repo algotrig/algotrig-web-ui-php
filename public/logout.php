@@ -2,14 +2,10 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../src/config.php';
+require_once __DIR__ . '/../src/config_loader.php';
 
 // Load configuration
-try {
-    $config = loadConfig(__DIR__ . '/../algotrig.ini');
-} catch (RuntimeException $e) {
-    die("Configuration Error: " . $e->getMessage());
-}
+$config = loadAppConfig(__DIR__ . '/../algotrig.ini');
 
 // Start session with secure parameters
 session_set_cookie_params([
