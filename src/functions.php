@@ -4,6 +4,54 @@ declare(strict_types=1);
 
 use AlgoTrig\PhpCore\ZerodhaKite;
 
+function submitTrade(ZerodhaKite $kite) {
+    try {
+        // Validate and sanitize inputs
+        $quantity = $_POST['quantity'] ?? '';
+        $tradingSymbol = trim($_POST['tradingSymbol'] ?? '');
+        $action = $_POST['action'] ?? '';
+
+        // Validate quantity as integer > 0
+        if (filter_var($quantity, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === false) {
+            throw new RuntimeException("Quantity must be an integer greater than 0.");
+        }
+
+        // Convert quantity to integer after validation
+        $quantity = (int) $quantity;
+
+        // Validate trading symbol
+        if (empty($tradingSymbol)) {
+            throw new RuntimeException("Trading symbol is required.");
+        }
+
+        $obj = new stdClass();
+        $obj->trading_symbol = $tradingSymbol;
+
+        // Validate action and handle accordingly
+        if ($action === 'buy') {
+            // Perform buy logic
+            $obj->buy_qty = $quantity;
+            $obj->sell_qty = 0;
+            echo "Buying $quantity $tradingSymbol.";
+        } elseif ($action === 'sell') {
+            // Perform sell logic
+            $obj->buy_qty = 0;
+            $obj->sell_qty = $quantity;
+            echo "Selling $quantity $tradingSymbol.";
+        } else {
+            throw new RuntimeException("Invalid action. Must be 'buy' or 'sell'.");
+        }
+
+        //$order = $kite->buildMarketOrder($tradingSymbol, intval($quantity), strtoupper($action));
+        $order = $kite->getOrder($obj, strtoupper($action));
+        print_r($order);
+        return $kite->executeOrder($order);
+    } catch (RuntimeException $e) {
+        // Handle error gracefully
+        echo "Error: " . $e->getMessage();
+    }
+}
+
 /**
  * Get tbody html for tradingData
  *
@@ -41,9 +89,22 @@ function objectToTableRow(object $object, bool $hideQuoteSymbol = true, bool $hi
         }
         $html .= getTd($key, $value);
     }
+    $html .= getTd("trade-form-action-td", getBuySellForm($object->trading_symbol));
     $html .= "</tr>";
     return $html;
 }
+
+function getBuySellForm(string $symbol): string {
+    $formHtml  = '<form action="/?action=submit-trade" method="POST" class="trade-form" >';
+    //$formHtml .= '<label for="quantity">Qty: </label>';
+    $formHtml .= '<input type="number" name="quantity" class="quantity" min="1" step="1" required />';
+    $formHtml .= '<input type="hidden" name="tradingSymbol" value="' . htmlspecialchars($symbol) . '" />';
+    $formHtml .= '<button type="submit" name="action" value="buy" class="buy-btn">Buy</button>';
+    $formHtml .= '<button type="submit" name="action" value="sell" class="sell-btn">Sell</button>';
+    $formHtml .= '</form>';
+    return $formHtml;
+}
+
 
 /**
  * Convert an object to an HTML table row
@@ -62,6 +123,7 @@ function objectToTableHeader(object $object, bool $hideQuoteSymbol = true, bool 
         $keyDisplay = strtoupper(str_replace('_', '<br/>', $key));
         $html .= "<th>{$keyDisplay}</th>";
     }
+    $html .= "<th>ACTION</th>";
     $html .= "</thead>";
     return $html;
 }

@@ -22,26 +22,33 @@ if (!isset($_SESSION['access_token'])) {
     exit;
 }
 
-$refreshInterval = isset($_GET['r']) ? (int)$_GET['r'] : intval($config['refresh']['default_interval']);
-// Validate and sanitize input
-$refreshInterval = validateRefreshInterval($refreshInterval, $config);
+$refreshInterval = isset($_GET['r']) ? validateRefreshInterval((int)$_GET['r'], $config) : intval($config['refresh']['default_interval']);
 $targetValue = isset($_GET['target_value']) ? (float)$_GET['target_value'] : 0.0;
 $executeOrders = isset($_GET['execute_orders']) ? (int)$_GET['execute_orders'] : 0;
 
 // Set refresh header
 header("Refresh: {$refreshInterval}");
 
+$action = isset($_GET['action']) ? $_GET['action'] : '';
+
 try {
-    $zerodhaKite = new ZerodhaKite($config['zerodha']);
-    $zerodhaKite->initializeKite($_SESSION['access_token']);
+    $zerodhaKite = new ZerodhaKite($config['zerodha'],$_SESSION['access_token']);
+
+    if (!empty($action)) {
+        if($action == "submit-trade"){
+            $executedOrdersData = submitTrade($zerodhaKite);
+        }
+    }
+
     $zerodhaKite->process($targetValue);
     // Execute Orders
     if ($executeOrders === 1) {
         $zerodhaKite->executeOrders();
     }
 
-    $nifty50Quote = $config['zerodha']['stock_exchange_key'] . ":NIFTY 50";
-    $nifty50Ltp = $zerodhaKite->fetchLTPforQuoteSymbol($nifty50Quote);
+    $margins = $zerodhaKite->fetchMargins("equity");
+
+    $nifty50Ltp = $zerodhaKite->getLTPforTradingSymbol("NIFTY 50");
 
     $tradingData = $zerodhaKite->getTradingData();
     $totalBuyAmount = $zerodhaKite->getTotalBuyAmount();

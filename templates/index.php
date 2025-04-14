@@ -25,6 +25,13 @@
     </header>
 
     <main>
+        <?php 
+            if (!empty($action)) {
+                echo '<pre>';
+                print_r($executedOrdersData);
+                echo '</pre>';
+            }
+        ?>
         <div class="market-info">
             <h2>Nifty 50:
                 <a href="/?execute_orders=0&target_value=<?php echo $nifty50Ltp; ?>&r=<?php echo $refreshInterval; ?>">
@@ -33,7 +40,7 @@
             </h2>
             <div class="time-info">
                 Executed at: <span class="font-bold"><?php echo date('d-M-Y H:i:s A'); ?></span>
-                <br/>
+                <br />
                 Refresh Interval: <span class="font-bold"><?php echo $refreshInterval; ?> seconds</span>
             </div>
         </div>
@@ -53,6 +60,7 @@
                     <td class="numeric-value"><?php echo formatNumber($totalBuyAmount); ?></td>
                 </tr>
             </table>
+            <pre><?php print_r($margins); ?></pre>
         </div>
 
         <div class="trading-table">
@@ -89,6 +97,27 @@
     <footer>
         <p>&copy; <?php echo date('Y') . " " . htmlspecialchars($config['app']['name']); ?>. All rights reserved.</p>
     </footer>
+    <script>
+        document.querySelectorAll('.quantity').forEach(function(input) {
+            input.addEventListener('input', function() {
+                if (this.value < 1) {
+                    this.value = '';
+                }
+            });
+        });
+        document.querySelectorAll('form').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                const symbol = form.querySelector('input[name="tradingSymbol"]').value;
+                const quantity = form.querySelector('input[name="quantity"]').value;
+
+                const message = `Are you sure you want to ${form.querySelector('[name="action"]:focus')?.value?.toUpperCase()} ${quantity} ${symbol}?`;
+
+                if (!confirm(message)) {
+                    e.preventDefault(); // Stop form submission
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

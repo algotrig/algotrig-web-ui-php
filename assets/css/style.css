@@ -182,6 +182,51 @@ tr:hover {
     width: 104px;
 }
 
+.trade-form {
+    display: inline-flex;
+    align-items: center;
+    overflow: hidden;
+    font-family: sans-serif;
+}
+
+.trade-form input[type="number"] {
+    width: 72px;
+    padding: 5px 0px;
+    font-size: 1rem;
+    text-align: right;
+}
+
+.trade-form button {
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.trade-form .buy-btn {
+    background-color: rgb(65, 132, 243);
+}
+
+.trade-form .buy-btn:hover {
+    background-color: rgb(40, 110, 220);
+}
+
+.trade-form .sell-btn {
+    background-color: rgb(255, 87, 34);
+}
+
+.trade-form .sell-btn:hover {
+    background-color: rgb(230, 70, 20);
+}
+
+.trade-form-action-td {
+    width: 180px;
+}
+
 /* Order execution styles */
 .order-execution {
     background-color: #fff;
