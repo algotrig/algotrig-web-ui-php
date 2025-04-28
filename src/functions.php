@@ -4,52 +4,47 @@ declare(strict_types=1);
 
 use AlgoTrig\PhpCore\ZerodhaKite;
 
-function submitTrade(ZerodhaKite $kite) {
-    try {
-        // Validate and sanitize inputs
-        $quantity = $_POST['quantity'] ?? '';
-        $tradingSymbol = trim($_POST['tradingSymbol'] ?? '');
-        $action = $_POST['action'] ?? '';
+function submitTrade(ZerodhaKite $kite): array {
+    // Validate and sanitize inputs
+    $quantity = $_POST['quantity'] ?? '';
+    $tradingSymbol = trim($_POST['tradingSymbol'] ?? '');
+    $action = $_POST['action'] ?? '';
 
-        // Validate quantity as integer > 0
-        if (filter_var($quantity, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === false) {
-            throw new RuntimeException("Quantity must be an integer greater than 0.");
-        }
-
-        // Convert quantity to integer after validation
-        $quantity = (int) $quantity;
-
-        // Validate trading symbol
-        if (empty($tradingSymbol)) {
-            throw new RuntimeException("Trading symbol is required.");
-        }
-
-        $obj = new stdClass();
-        $obj->trading_symbol = $tradingSymbol;
-
-        // Validate action and handle accordingly
-        if ($action === 'buy') {
-            // Perform buy logic
-            $obj->buy_qty = $quantity;
-            $obj->sell_qty = 0;
-            echo "Buying $quantity $tradingSymbol.";
-        } elseif ($action === 'sell') {
-            // Perform sell logic
-            $obj->buy_qty = 0;
-            $obj->sell_qty = $quantity;
-            echo "Selling $quantity $tradingSymbol.";
-        } else {
-            throw new RuntimeException("Invalid action. Must be 'buy' or 'sell'.");
-        }
-
-        //$order = $kite->buildMarketOrder($tradingSymbol, intval($quantity), strtoupper($action));
-        $order = $kite->getOrder($obj, strtoupper($action));
-        print_r($order);
-        return $kite->executeOrder($order);
-    } catch (RuntimeException $e) {
-        // Handle error gracefully
-        echo "Error: " . $e->getMessage();
+    // Validate quantity as integer > 0
+    if (filter_var($quantity, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === false) {
+        throw new RuntimeException("Quantity must be an integer greater than 0.");
     }
+
+    // Convert quantity to integer after validation
+    $quantity = (int) $quantity;
+
+    // Validate trading symbol
+    if (empty($tradingSymbol)) {
+        throw new RuntimeException("Trading symbol is required.");
+    }
+
+    $obj = new stdClass();
+    $obj->trading_symbol = $tradingSymbol;
+
+    // Validate action and handle accordingly
+    if ($action === 'buy') {
+        // Perform buy logic
+        $obj->buy_qty = $quantity;
+        $obj->sell_qty = 0;
+    } elseif ($action === 'sell') {
+        // Perform sell logic
+        $obj->buy_qty = 0;
+        $obj->sell_qty = $quantity;
+    } else {
+        throw new RuntimeException("Invalid action. Must be 'buy' or 'sell'.");
+    }
+
+    $order = $kite->getOrder($obj, strtoupper($action));
+    $executedOrderData = $kite->executeOrder($order);
+    return array(
+        'order' => $order,
+        'executedOrderData' => $executedOrderData
+    );
 }
 
 /**

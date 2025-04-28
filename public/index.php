@@ -36,7 +36,7 @@ try {
 
     if (!empty($action)) {
         if($action == "submit-trade"){
-            $executedOrdersData = submitTrade($zerodhaKite);
+            $submitTradeData = submitTrade($zerodhaKite);
         }
     }
 

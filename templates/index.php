@@ -26,13 +26,6 @@
     </header>
 
     <main>
-        <?php 
-            if (!empty($action)) {
-                echo '<pre>';
-                print_r($executedOrdersData);
-                echo '</pre>';
-            }
-        ?>
         <div class="market-info">
             <h2>Nifty 50:
                 <a href="/?execute_orders=0&target_value=<?php echo $nifty50Ltp; ?>&r=<?php echo $refreshInterval; ?>">
@@ -45,7 +38,6 @@
                 Refresh Interval: <span class="font-bold"><?php echo $refreshInterval; ?> seconds</span>
             </div>
         </div>
-
         <div class="summary">
             <table>
                 <tr>
@@ -84,7 +76,24 @@
                 </tr>
             </table>
         </div>
-
+        
+        <?php 
+            if (!empty($action)) {
+                if($action == "submit-trade"){
+                    ?>
+                    <div class="order-execution">  
+                        <pre>
+                            <?php
+                                $order = $submitTradeData['order'];
+                                print_r($submitTradeData);
+                            ?>
+                        </pre>
+                    </div>
+                   <?php
+                }   
+            }
+        ?>
+        </div>
         <div class="trading-table">
             <table id="trading_table">
                 <?php
