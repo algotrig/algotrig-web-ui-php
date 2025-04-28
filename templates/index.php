@@ -61,6 +61,28 @@
                     <td class="numeric-value"><?php echo formatNumber($totalBuyAmount); ?></td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <td>Opening Balance:</td>
+                    <td class="numeric-value"><?php echo formatNumber($margins->equity->available->opening_balance); ?></td>
+                </tr>
+                <tr>
+                    <td>Debits:</td>
+                    <td class="numeric-value"><?php echo formatNumber($margins->equity->utilised->debits); ?></td>
+                </tr>
+                <tr>
+                    <td>Sales:</td>
+                    <td class="numeric-value"><?php echo formatNumber($margins->equity->utilised->holding_sales); ?></td>
+                </tr>
+                <tr>
+                    <td>Payin:</td>
+                    <td class="numeric-value"><?php echo formatNumber($margins->equity->available->intraday_payin); ?></td>
+                </tr>
+                <tr>
+                    <td>Live Balance:</td>
+                    <td class="numeric-value"><?php echo formatNumber($margins->equity->available->live_balance); ?></td>
+                </tr>
+            </table>
         </div>
 
         <div class="trading-table">

@@ -97,7 +97,7 @@ header {
 
 /* Main content styles */
 main {
-    max-width: 1350px;
+    max-width: 85rem;
     margin: 0 auto;
 }
 
@@ -120,6 +120,9 @@ main {
     border-radius: 4px;
     margin-bottom: 1rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex; 
+    gap: 1rem; 
+    align-items: flex-start; 
 }
 
 .summary p {
@@ -128,7 +131,7 @@ main {
 }
 
 .summary table {
-    width: 270px;
+    width: 20rem; 
 }
 
 .summary .numeric-value {
