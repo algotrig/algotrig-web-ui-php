@@ -115,7 +115,7 @@ function getBuySellForm(string $symbol): string {
  * @return string HTML table header
  */
 function objectToTableHeader(object $object, bool $hideQuoteSymbol = true, bool $hideInstrumentToken = true): string {
-    $html = "<thead>";
+    $html = "<thead><tr>";
     foreach ($object as $key => $value) {
         if (($hideQuoteSymbol && $key === "quote_symbol") || ($hideInstrumentToken && $key === "instrument_token")) {
             continue;
@@ -124,7 +124,7 @@ function objectToTableHeader(object $object, bool $hideQuoteSymbol = true, bool 
         $html .= "<th>{$keyDisplay}</th>";
     }
     $html .= "<th>ACTION</th>";
-    $html .= "</thead>";
+    $html .= "</tr></thead>";
     return $html;
 }
 

@@ -7,7 +7,8 @@
     <title><?php echo htmlspecialchars($config['app']['name'] . " - " . $config['app']['env']); ?></title>
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon.ico">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.2.1/tablesort.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.32.0/js/jquery.tablesorter.min.js" ></script>
 </head>
 
 <body>
@@ -60,7 +61,6 @@
                     <td class="numeric-value"><?php echo formatNumber($totalBuyAmount); ?></td>
                 </tr>
             </table>
-            <pre><?php print_r($margins); ?></pre>
         </div>
 
         <div class="trading-table">
@@ -72,7 +72,9 @@
                 ?>
             </table>
             <script type="text/javascript">
-                new Tablesort(document.getElementById('trading_table'));
+                $(function() {
+                    $("#trading_table").tablesorter();
+                });
             </script>
         </div>
 
