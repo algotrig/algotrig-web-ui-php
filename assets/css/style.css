@@ -139,6 +139,20 @@ main {
     width: 104px;
 }
 
+#orders_div {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+#orders_div .json-data {
+    width: 30rem;
+}
+
+.json-container {
+    padding: 0.1rem 0.5rem;
+}
+
 /* Table styles */
 .trading-table {
     background-color: #fff;

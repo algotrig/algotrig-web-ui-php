@@ -7,8 +7,9 @@
     <title><?php echo htmlspecialchars($config['app']['name'] . " - " . $config['app']['env']); ?></title>
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon.ico">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" ></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.32.0/js/jquery.tablesorter.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.32.0/js/jquery.tablesorter.min.js"></script>
+    <script src="/assets/js/jsonview.js"></script>
 </head>
 
 <body>
@@ -76,24 +77,41 @@
                 </tr>
             </table>
         </div>
-        
-        <?php 
-            if (!empty($action)) {
-                if($action == "submit-trade"){
-                    ?>
-                    <div class="order-execution">  
-                        <pre>
-                            <?php
-                                $order = $submitTradeData['order'];
-                                print_r($submitTradeData);
-                            ?>
-                        </pre>
+        <?php if (!empty($action) || $executeOrders > 0) { ?>
+            <div id="orders_div">
+                <?php if ($action == "submit-trade") { ?>
+                    <div class="json-data">
+                        <h4>Submitted Orders:</h4>
+                        <div id="submit_trade_data"></div>
+                        <script>
+                            var submitTradeJsonData = <?php echo json_encode($submitTradeData); ?>;
+                            var submitTradeTree = jsonview.renderJSON(submitTradeJsonData, document.querySelector('#submit_trade_data'));
+                            console.log(submitTradeTree);
+                        </script>
                     </div>
-                   <?php
-                }   
-            }
-        ?>
-        </div>
+                <?php } ?>
+                <?php if ($executeOrders > 0) { ?>
+                    <div class="json-data">
+                        <h4>Executed Orders:</h4>
+                        <div id="executed_orders_data"></div>
+                        <script>
+                            var executedOrdersJsonData = <?php echo json_encode($zerodhaKite->getExecutedOrdersData()); ?>;
+                            var executedOrdersTree = jsonview.renderJSON(executedOrdersJsonData, document.querySelector('#executed_orders_data'));
+                            console.log(executedOrdersTree);
+                        </script>
+                    </div>
+                    <div class="json-data">
+                        <h4>Failed Orders:</h4>
+                        <div id="failed_orders_data"></div>
+                        <script>
+                            var failedOrdersJsonData = <?php echo json_encode($zerodhaKite->getFailedOrders());?>;
+                            var failedOrdersTree = jsonview.renderJSON(failedOrdersJsonData, document.querySelector('#failed_orders_data'));
+                            console.log(failedOrdersTree);
+                        </script>
+                    </div>
+                <?php } ?>
+            </div>
+        <?php } ?>
         <div class="trading-table">
             <table id="trading_table">
                 <?php
@@ -108,23 +126,6 @@
                 });
             </script>
         </div>
-
-        <?php if ($executeOrders > 0): ?>
-            <div class="order-execution">
-                <h3>Executed Orders:</h3>
-                <?php
-                echo "<pre>";
-                print_r($zerodhaKite->getExecutedOrdersData());
-                echo "</pre>";
-                ?>
-                <h3>Failed Orders:</h3>
-                <?php
-                echo "<pre>";
-                print_r($zerodhaKite->getFailedOrders());
-                echo "</pre>";
-                ?>
-            </div>
-        <?php endif; ?>
     </main>
 
     <footer>
