@@ -1,6 +1,6 @@
 # AlgoTrig Trading Application
 
-A PHP-based algorithmic trading application that integrates with the Zerodha trading platform to manage and execute trading strategies.
+Web Development repository for the AlgoTrig UI in PHP. Contains experimental features and connects to the core backend at [algotrig/algotrig-php-core](https://github.com/algotrig/algotrig-php-core).
 
 ## Features
 
@@ -13,7 +13,7 @@ A PHP-based algorithmic trading application that integrates with the Zerodha tra
 
 ## Requirements
 
-- PHP 7.4 or higher
+- PHP 8.0 or higher
 - Composer
 - Zerodha trading account
 - Web server (Apache/Nginx)
@@ -22,7 +22,7 @@ A PHP-based algorithmic trading application that integrates with the Zerodha tra
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/algotrig.git
+git clone https://github.com/algotrig/algotrig-web-ui-php.git
 cd algotrig
 ```
 
@@ -32,16 +32,14 @@ composer install
 ```
 
 3. Configure environment variables:
-Create a `.env` file in the root directory with the following variables:
+Set the api_key and secret from [kite.trade](https://kite.trade) in the `algotrig.ini` file:
 ```env
-APP_DEBUG=false
-ZERODHA_API_KEY=your_api_key
-ZERODHA_SECRET=your_secret_key
+api_key = yourapikey
+secret = yourapisecretfromkite
 ```
 
 4. Configure your web server:
 - Point the document root to the `public` directory
-- Ensure the `logs` directory is writable
 - Enable URL rewriting (mod_rewrite for Apache)
 
 ## Directory Structure
@@ -51,21 +49,22 @@ algotrig/
 ├── assets/
 │   ├── css/
 │   └── js/
-├── config/
-│   └── config.php
-├── logs/
 ├── public/
 │   └── index.php
 │   └── login.php
 │   └── logout.php
 ├── src/
-│   └── config.php
+│   └── config_loader.php
 │   └── functions.php
 ├── templates/
 │   └── index.php
 ├── vendor/
 ├── .gitignore
+├── .htaccess
+├── algotrig.ini
 ├── composer.json
+├── composer.lock
+├── LICENSE
 └── README.md
 ```
 
@@ -73,16 +72,7 @@ algotrig/
 
 1. Access the application through your web browser
 2. Log in with your Zerodha credentials
-3. Configure your trading parameters
-4. Monitor positions and execute orders
-
-## Security Considerations
-
-- All API keys are stored in environment variables
-- Session security is enforced with secure cookie settings
-- Input validation and sanitization are implemented
-- CSRF protection is in place
-- Error messages are logged but not displayed to users in production
+3. Monitor positions and execute orders
 
 ## Contributing
 

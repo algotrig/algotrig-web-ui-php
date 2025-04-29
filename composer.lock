@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8c3bf4daa6844f4bf57a0486f74de9f4",
+    "content-hash": "fd1116636ae2980599feb9ca4af50c04",
     "packages": [
         {
             "name": "algotrig/algotrig-php-core",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/algotrig/algotrig-php-core.git",
-                "reference": "cf88c8b222c2f7d3d11358c7e1b6c1eb0de5a535"
+                "reference": "a1d98ddb178ae2461e09dbce86cd35b43e5cba87"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/algotrig/algotrig-php-core/zipball/cf88c8b222c2f7d3d11358c7e1b6c1eb0de5a535",
-                "reference": "cf88c8b222c2f7d3d11358c7e1b6c1eb0de5a535",
+                "url": "https://api.github.com/repos/algotrig/algotrig-php-core/zipball/a1d98ddb178ae2461e09dbce86cd35b43e5cba87",
+                "reference": "a1d98ddb178ae2461e09dbce86cd35b43e5cba87",
                 "shasum": ""
             },
             "require": {
@@ -56,7 +56,7 @@
                 "issues": "https://github.com/AlgoTrig/algotrig-php-core/issues",
                 "source": "https://github.com/AlgoTrig/algotrig-php-core"
             },
-            "time": "2025-04-05T20:55:15+00:00"
+            "time": "2025-04-14T17:54:06+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -649,9 +649,11 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {},
-    "prefer-stable": false,
+    "prefer-stable": true,
     "prefer-lowest": false,
-    "platform": {},
+    "platform": {
+        "php": "^8.0"
+    },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }

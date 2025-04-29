@@ -1,5 +1,34 @@
 {
+    "name": "algotrig/algotrig-web-ui-php",
+    "description": "Web Development repository for the AlgoTrig UI in PHP. Contains experimental features and connects to the core backend at algotrig/algotrig-php-core.",
+    "type": "project",
+    "license": "MIT",
+    "keywords": [
+        "algotrading",
+        "zerodha",
+        "kiteconnect",
+        "php",
+        "trading",
+        "algotrig"
+    ],
+    "homepage": "https://github.com/AlgoTrig/algotrig-web-ui-php",
+    "support": {
+        "source": "https://github.com/AlgoTrig/algotrig-web-ui-php",
+        "issues": "https://github.com/AlgoTrig/algotrig-web-ui-php/issues"
+    },
+    "authors": [
+        {
+            "name": "AlgoTrig - Chitrang Shah",
+            "email": "algotrig@outlook.com",
+            "homepage": "https://algotrig.in",
+            "role": "Founder"
+        }
+    ],
+    "autoload": {},
     "require": {
+        "php": "^8.0",
         "algotrig/algotrig-php-core": "^0.1.0"
-    }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }
