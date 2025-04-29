@@ -7,16 +7,6 @@ require_once __DIR__ . '/../src/config_loader.php';
 // Load configuration
 $config = loadAppConfig(__DIR__ . '/../algotrig.ini');
 
-// Start session with secure parameters
-session_set_cookie_params([
-    'lifetime' => $config['session']['lifetime'],
-    'path' => $config['session']['path'],
-    'domain' => $config['session']['domain'],
-    'secure' => $config['session']['secure'],
-    'httponly' => $config['session']['httponly'],
-    'samesite' => $config['session']['samesite']
-]);
-
 session_start();
 
 // Log user logout if user was logged in
@@ -26,19 +16,6 @@ if (isset($_SESSION['user_id'])) {
 
 // Clear all session variables
 $_SESSION = [];
-
-// Destroy the session cookie
-if (isset($_COOKIE[session_name()])) {
-    setcookie(
-        session_name(),
-        '',
-        time() - 3600,
-        $config['session']['path'],
-        $config['session']['domain'],
-        boolval($config['session']['secure']),
-        boolval($config['session']['httponly'])
-    );
-}
 
 // Destroy the session
 session_destroy();
