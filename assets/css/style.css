@@ -16,7 +16,6 @@ body {
 header {
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 1rem;
     margin-bottom: 1rem;
 }
 
@@ -31,10 +30,8 @@ header {
 }
 
 .header-logo {
-    height: 60px;
-    width: 230px;
     display: flex;
-    align-items: center;
+    align-items: baseline;
 }
 
 .header-logo span {
@@ -49,6 +46,11 @@ header {
 
 .trig {
     color: #f33d2c;
+}
+
+.header-logo .host-suffix {
+    color: #b3b3b3;
+    font-size: 35px;
 }
 
 .time-info {
@@ -120,9 +122,9 @@ main {
     border-radius: 4px;
     margin-bottom: 1rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex; 
-    gap: 1rem; 
-    align-items: flex-start; 
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
 }
 
 .summary p {
@@ -131,7 +133,7 @@ main {
 }
 
 .summary table {
-    width: 20rem; 
+    width: 20rem;
 }
 
 .summary .numeric-value {

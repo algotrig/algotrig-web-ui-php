@@ -16,7 +16,7 @@
     <header>
         <div class="header-content">
             <div class="header-logo">
-                <span class="algo">Algo</span><span class="trig">Trig</span>
+                <span class="algo">Algo</span><span class="trig">Trig</span><span class="host-suffix"><?php echo $config['app']['host_suffix']; ?></span>
             </div>
             <div class="actions">
                 <a href="/?execute_orders=1&target_value=<?php echo $targetValue; ?>&r=<?php echo $refreshInterval; ?>" class="btn btn-success">Execute</a>
